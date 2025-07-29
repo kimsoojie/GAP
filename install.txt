@@ -1,0 +1,10 @@
+conda create -n GAP python=3.9 -y
+
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
+
+pip install pandas einops timm opencv-contrib-python seaborn tqdm ftfy regex scikit-learn tensorboardX h5py
+
+pip install torchpack==0.1.3
+
+pip install numpy==1.24.4
+
