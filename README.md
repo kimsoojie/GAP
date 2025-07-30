@@ -17,7 +17,7 @@ previously known as ["LST: Language Supervised Training for Skeleton-based Actio
 # Prerequisites
 
 - CUDA <= 11.7
-- Python >= 3.6
+- Python >= 3.9
 - PyTorch >= 1.1.0, PyTorch < 2.*
 - PyYAML, tqdm, tensorboardX, torchpack==0.1.3, numpy==1.24.4
 - pandas, einops, timm, seaborn, seaborn, ftfy, regex, scikit-learn, h5py
