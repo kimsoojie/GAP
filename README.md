@@ -16,9 +16,11 @@ previously known as ["LST: Language Supervised Training for Skeleton-based Actio
 
 # Prerequisites
 
+- CUDA <= 11.7
 - Python >= 3.6
-- PyTorch >= 1.1.0
-- PyYAML, tqdm, tensorboardX
+- PyTorch >= 1.1.0, PyTorch < 2.*
+- PyYAML, tqdm, tensorboardX, torchpack==0.1.3, numpy==1.24.4
+- pandas, einops, timm, seaborn, seaborn, ftfy, regex, scikit-learn, h5py
 
 
 - We provide the dependency file of our experimental environment, you can install all dependencies by creating a new anaconda virtual environment and running `pip install -r requirements.txt `
