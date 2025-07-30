@@ -18,7 +18,7 @@ test_feeder_args:
 
 
 # model
-model: model.baseline.Model
+model: model.ctrgcn.Model_lst_4part_ucla #model.baseline.Model
 model_args:
   num_class: 10
   num_point: 20
