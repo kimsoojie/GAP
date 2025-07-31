@@ -30,6 +30,7 @@ from torchlight import DictAction
 from tools import *
 from Text_Prompt import *
 from KLLoss import KLLoss
+import json
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part()
 text_list = text_prompt_openai_random()
@@ -537,7 +538,9 @@ class Processor():
             step = 0
             process = tqdm(self.data_loader[ln], ncols=40)
 
-
+            _data_list = []
+            _label_list = []
+            _embedding_list = []
 
             for batch_idx, (data, label, index) in enumerate(process):
                 label_list.append(label)
@@ -547,7 +550,11 @@ class Processor():
                     data = data.float().cuda(self.output_device)
                     label = label.long().cuda(self.output_device)
                     
-                    output, _, _, _ = self.model(data)
+                    output, _, _, _, embedding = self.model(data)
+                    _data_list.append(np.array(data.cpu()))
+                    _label_list.append(np.array(label.cpu()))
+                    _embedding_list.append(np.array(embedding.cpu()))
+                    
                     loss = self.loss_ce(output, label)
 
                     score_frag.append(output.data.cpu().numpy())
@@ -565,6 +572,14 @@ class Processor():
                             f_r.write(str(x) + ',' + str(true[i]) + '\n')
                         if x != true[i] and wrong_file is not None:
                             f_w.write(str(index[i]) + ',' + str(x) + ',' + str(true[i]) + '\n')
+            
+            # save embeddings
+            _data_list =  np.concatenate(_data_list)
+            _label_list =  np.concatenate(_label_list)
+            _embedding_list =  np.concatenate(_embedding_list)
+            np.savez("embedding_ntu.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
+        
+                
             score = np.concatenate(score_frag)
             loss = np.mean(loss_value)
             if 'ucla' in self.arg.feeder:

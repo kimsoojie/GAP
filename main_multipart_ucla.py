@@ -30,7 +30,7 @@ from torchlight import DictAction
 from tools import *
 from Text_Prompt import *
 from KLLoss import KLLoss
-
+import json
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part_ucla()
 
@@ -540,7 +540,10 @@ class Processor():
             step = 0
             process = tqdm(self.data_loader[ln], ncols=40)
 
-
+            _data_list = []
+            _label_list = []
+            _embedding_list = []
+            
             for batch_idx, (data, label, index) in enumerate(process):
                 label_list.append(label)
                 with torch.no_grad():
@@ -548,8 +551,11 @@ class Processor():
                     data = data.float().cuda(self.output_device)
                     label = label.long().cuda(self.output_device)
                     
-                    output, _, _, _ = self.model(data)
-
+                    output, _, _, _, embedding = self.model(data)
+                    _data_list.append(np.array(data.cpu()))
+                    _label_list.append(np.array(label.cpu()))
+                    _embedding_list.append(np.array(embedding.cpu()))
+                    
                     loss = self.loss_ce(output, label)
 
                     score_frag.append(output.data.cpu().numpy())
@@ -558,7 +564,8 @@ class Processor():
                     _, predict_label = torch.max(output.data, 1)
                     pred_list.append(predict_label.data.cpu().numpy())
                     step += 1
-
+            
+            
                 if wrong_file is not None or result_file is not None:
                     predict = list(predict_label.cpu().numpy())
                     true = list(label.data.cpu().numpy())
@@ -567,6 +574,13 @@ class Processor():
                             f_r.write(str(x) + ',' + str(true[i]) + '\n')
                         if x != true[i] and wrong_file is not None:
                             f_w.write(str(index[i]) + ',' + str(x) + ',' + str(true[i]) + '\n')
+            
+            # save embeddings
+            _data_list =  np.concatenate(_data_list)
+            _label_list =  np.concatenate(_label_list)
+            _embedding_list =  np.concatenate(_embedding_list)
+            np.savez("embedding_ucla.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
+            
             score = np.concatenate(score_frag)
             loss = np.mean(loss_value)
             if 'ucla' in self.arg.feeder:
@@ -667,7 +681,7 @@ if __name__ == '__main__':
     p = parser.parse_args()
     if p.config is not None:
         with open(p.config, 'r') as f:
-            default_arg = yaml.load(f,Loader=yaml.FullLoader)
+            default_arg = yaml.load(f, Loader=yaml.FullLoader)
         key = vars(p).keys()
         for k in default_arg.keys():
             if k not in key:

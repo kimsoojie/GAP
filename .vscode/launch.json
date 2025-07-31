@@ -12,7 +12,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "train",
+            "name": "train-ucla",
             "type": "debugpy",
             "request": "launch",
             "program": "main_multipart_ucla.py",
@@ -28,7 +28,7 @@
             }
         },
         {
-            "name": "test",
+            "name": "test-ucla",
             "type": "debugpy",
             "request": "launch",
             "program": "main_multipart_ucla.py",
@@ -36,10 +36,45 @@
             "args": [
                 "--config", "config/ucla/lst_joint.yaml",
                 "--model", "model.ctrgcn.Model_lst_4part_ucla",
-                "--work-dir", "ucla/lst_joint",
+                "--work-dir", "work_dir/ucla/lst_joint",
                 "--phase", "test",
                 "--save-score", "True",
                 "--weights", "work_dir/ucla/lst_joint/runs-75-1425.pt",
+                "--device", "0"
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            }
+        },
+        {
+            "name": "train-ntu",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main_multipart_ntu.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config", "config/nturgbd120-cross-set/lst_joint.yaml",
+                "--model", "model.ctrgcn.Model_lst_4part",
+                "--work-dir", "work_dir/test",
+                "--device", "0", "1"
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0,1"
+            }
+        },
+        {
+            "name": "test-ntu",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main_multipart_ntu.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config", "config/nturgbd120-cross-set/lst_joint.yaml",
+                "--model", "model.ctrgcn.Model_lst_4part",
+                "--work-dir", "work_dir/ntu120/cset/lst_joint",
+                "--phase", "test",
+                "--save-score", "True",
+                "--weights", "work_dir/ntu120/cset/lst_joint/runs-110-29920.pt",
                 "--device", "0"
             ],
             "env": {
