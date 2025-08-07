@@ -574,11 +574,16 @@ class Processor():
                             f_w.write(str(index[i]) + ',' + str(x) + ',' + str(true[i]) + '\n')
             
             # save embeddings
-            _data_list =  np.concatenate(_data_list)
-            _label_list =  np.concatenate(_label_list)
-            _embedding_list =  np.concatenate(_embedding_list)
-            np.savez("embedding_ntu.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
-        
+            #_data_list =  np.concatenate(_data_list)
+            #_label_list =  np.concatenate(_label_list)
+            #_embedding_list =  np.concatenate(_embedding_list)
+            #np.savez("embedding_ntu.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
+
+            # load embeddings
+            #loaded = np.load("embedding_ntu.npz")
+            #_data_list = loaded["data"]
+            #_label_list = loaded["label"]
+            #_embedding_list = loaded["embedding"]
                 
             score = np.concatenate(score_frag)
             loss = np.mean(loss_value)

@@ -41,6 +41,7 @@ class Feeder(Dataset):
         self.bone = bone
         self.vel = vel
         self.load_data()
+        #self.load_data_split()
         if normalization:
             self.get_mean_map()
 
@@ -169,7 +170,39 @@ class Feeder_hard(Dataset):
             raise NotImplementedError('data split only supports train/test')
         N, T, _ = self.data.shape
         self.data = self.data.reshape((N, T, 2, 25, 3)).transpose(0, 4, 1, 3, 2)
+    
+    def load_data_split(self):
+        # data: N C V T M
+        npz_data = np.load(self.data_path)
+        if self.split == 'train':
+            self.data = npz_data['x_train']
+            self.label = np.where(npz_data['y_train'] > 0)[1]
+            self.sample_name = ['train_' + str(i) for i in range(len(self.data))]
+        elif self.split == 'test':
+            self.data = npz_data['x_test']
+            self.label = np.where(npz_data['y_test'] > 0)[1]
+            self.sample_name = ['test_' + str(i) for i in range(len(self.data))]
+        else:
+            raise NotImplementedError('data split only supports train/test')
+        
+        # seen/unseen split
+        unique_labels = np.unique(self.label)
 
+        num_unseen=10
+        step = max(1, len(unique_labels) // num_unseen)
+        unseen_labels = set(unique_labels[::step][:num_unseen]) 
+        seen_labels = set(unique_labels) - unseen_labels
+        print(f"Unseen labels: {sorted(unseen_labels)}")
+        print(f"Seen labels: {sorted(seen_labels)}")
+
+        indices = [i for i, label in enumerate(self.label) if label in seen_labels]
+        self.data = self.data[indices]
+        self.label = self.label[indices]
+        self.sample_name = [self.sample_name[i] for i in indices]
+
+        N, T, _ = self.data.shape
+        self.data = self.data.reshape((N, T, 2, 25, 3)).transpose(0, 4, 1, 3, 2)
+        
     def get_mean_map(self):
         data = self.data
         N, C, T, V, M = data.shape

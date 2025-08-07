@@ -36,6 +36,7 @@ class Feeder(Dataset):
         self.use_mmap = use_mmap
         self.repeat = repeat
         self.load_data()
+        #self.load_data_split()
         if normalization:
             self.get_mean_map()
 
@@ -50,6 +51,31 @@ class Feeder(Dataset):
             value = np.array(skeletons)
             self.data.append(value)
 
+    def load_data_split(self):
+        unique_labels = np.unique(self.label)
+        num_unseen = 5
+        step = max(1, len(unique_labels) // num_unseen)
+        unseen_labels = set(unique_labels[::step][:num_unseen])
+        seen_labels = set(unique_labels) - unseen_labels
+        print(f"Unseen labels: {sorted(unseen_labels)}") # [0, 2, 4, 6, 8]
+        print(f"Seen labels: {sorted(seen_labels)}") # [1, 3, 5, 7, 9]
+    
+        # data: N C V T M
+        self.data = []
+        self.label = []
+        self.sample_name = []
+        for index in range(len(self.data_dict)):
+            info = self.data_dict[index]
+            label = int(info['label']) - 1
+            if label in seen_labels:
+                file_name = info['file_name']
+                with open(self.nw_ucla_root + file_name + '.json', 'r') as f:
+                    json_file = json.load(f)
+                skeletons = json_file['skeletons']
+                value = np.array(skeletons)
+                self.data.append(value)
+                self.label.append(label)
+                self.sample_name.append(file_name)
 
     def get_mean_map(self):
         data = self.data
