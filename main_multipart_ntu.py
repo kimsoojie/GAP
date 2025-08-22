@@ -31,6 +31,8 @@ from tools import *
 from Text_Prompt import *
 from KLLoss import KLLoss
 import json
+from collections import defaultdict
+from sklearn.metrics.pairwise import cosine_similarity
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part()
 text_list = text_prompt_openai_random()
@@ -573,17 +575,45 @@ class Processor():
                         if x != true[i] and wrong_file is not None:
                             f_w.write(str(index[i]) + ',' + str(x) + ',' + str(true[i]) + '\n')
             
+            #####################################################################################################
             # save embeddings
+            #####################################################################################################
             #_data_list =  np.concatenate(_data_list)
-            #_label_list =  np.concatenate(_label_list)
+            #_label_list =  np.concatenate(_label_list) # (59477,)
             #_embedding_list =  np.concatenate(_embedding_list)
-            #np.savez("embedding_ntu.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
-
-            # load embeddings
-            #loaded = np.load("embedding_ntu.npz")
-            #_data_list = loaded["data"]
-            #_label_list = loaded["label"]
-            #_embedding_list = loaded["embedding"]
+            #np.savez("embedding_512_test_split10_ntu120.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
+            #####################################################################################################
+          
+            #####################################################################################################
+            # embedding similarity
+            #####################################################################################################
+            '''
+            #loaded = np.load("embeddings_ntu120/split24/embedding_l10_test_split24_ntu120.npz")
+            loaded = np.load('embeddings_ntu120/split10/embedding_l10_test_split10_ntu120.npz')
+            _data_list = loaded["data"]
+            _label_list = loaded["label"]
+            _embedding_list = loaded["embedding"]
+            _data_list,_label_list,_embedding_list = self.sample_embedding(_data_list,_label_list,_embedding_list)
+            top1_acc = []
+            top3_acc = []
+            top1_acc_seen = []
+            top1_acc_unseen= []
+            #acc1, acc3 = self.similarity_acc_mean(_label_list,_embedding_list)
+            
+            for i in range(500):
+                acc= self.similarity_acc_random(_label_list,_embedding_list)
+                
+                top1_acc.append(acc['overall'][0])
+                top3_acc.append(acc['overall'][1])
+                top1_acc_seen.append(acc['seen'][0])
+                top1_acc_unseen.append(acc['unseen'][0])
+            print(f"Top-1: {np.array(top1_acc).mean():.2%}, STD: {np.array(top1_acc).std():.2%}")
+            print(f"Top-3: {np.array(top3_acc).mean():.2%}, STD: {np.array(top3_acc).std():.2%}")
+            print(f"Seen: {np.array(top1_acc_seen).mean():.2%}, STD: {np.array(top1_acc_seen).std():.2%}")
+            print(f"Unseen: {np.array(top1_acc_unseen).mean():.2%}, STD: {np.array(top1_acc_unseen).std():.2%}")
+            print("-" * 20)
+            '''
+            #####################################################################################################
                 
             score = np.concatenate(score_frag)
             loss = np.mean(loss_value)
@@ -624,6 +654,149 @@ class Processor():
                 writer.writerow(each_acc)
                 writer.writerows(confusion)
 
+    def sample_embedding(self, _data_list, _label_list, _embedding_list, samples=10):
+        unique_labels = np.unique(_label_list)
+        sample_data = []
+        sample_embeddings = []
+        sample_labels = []
+        for label in unique_labels:
+            label_indices = np.where(_label_list == label)[0]
+            
+            step = len(label_indices) / samples
+            chosen_indices = [label_indices[int(i * step)] for i in range(10)]
+            
+            sample_data.append(_data_list[chosen_indices])
+            sample_embeddings.append(_embedding_list[chosen_indices])
+            sample_labels.append(_label_list[chosen_indices])
+            
+        sample_data = np.concatenate(sample_data, axis=0)
+        sample_embeddings = np.concatenate(sample_embeddings, axis=0)
+        sample_labels = np.concatenate(sample_labels, axis=0)
+        return sample_data, sample_labels, sample_embeddings
+        
+    def similarity_acc_random(self, _label_list, _embedding_list):
+        ##############################
+        # random sampling 
+        ##############################
+        
+        # seen/unseen split
+        # split 110/10: unseen [0, 12, 24, 36, 48, 60, 72, 84, 96, 108]
+        # split 96/24: unseen [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115]
+        # split 80/40: unseen [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108, 111, 114, 117]
+        # split 60/60: unseen [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118]
+        
+        unseen_labels = {0, 12, 24, 36, 48, 60, 72, 84, 96, 108}
+
+        num_samples = len(_label_list)
+        label_to_indices = defaultdict(list)
+        for idx, label in enumerate(_label_list):
+            label_to_indices[label].append(idx)
+
+        unique_labels = list(label_to_indices.keys())
+        num_classes = len(unique_labels)
+
+        # prototype per class
+        prototype_indices = []
+        for label in unique_labels:
+            prototype_idx = np.random.choice(label_to_indices[label])
+            prototype_indices.append(prototype_idx)
+
+        all_indices = set(range(num_samples))
+        query_indices = list(all_indices - set(prototype_indices))
+
+        prototype_embeddings = _embedding_list[prototype_indices]
+        prototype_labels = _label_list[prototype_indices]
+        query_embeddings = _embedding_list[query_indices]
+        query_labels = _label_list[query_indices]
+
+        num_features = np.prod(_embedding_list.shape[1:])
+        prototype_embeddings_flat = prototype_embeddings.reshape(len(prototype_labels), num_features)
+        query_embeddings_flat = query_embeddings.reshape(len(query_labels), num_features)
+
+        similarities = cosine_similarity(query_embeddings_flat, prototype_embeddings_flat)
+        top_k_indices = np.argsort(-similarities, axis=1)
+
+        top1_predicted_indices = top_k_indices[:, 0]
+        top1_predicted_labels = prototype_labels[top1_predicted_indices]
+        top3_predicted_indices = top_k_indices[:, :3]
+        top3_predicted_labels = prototype_labels[top3_predicted_indices]
+
+        top1_correct_predictions = np.sum(top1_predicted_labels == query_labels)
+        top1_accuracy = top1_correct_predictions / len(query_labels)
+
+        top3_correct_predictions = np.sum([query_labels[i] in top3_predicted_labels[i] for i in range(len(query_labels))])
+        top3_accuracy = top3_correct_predictions / len(query_labels)
+
+        seen_mask = np.array([lbl not in unseen_labels for lbl in query_labels])
+        unseen_mask = np.array([lbl in unseen_labels for lbl in query_labels])
+
+        def masked_acc(mask):
+            if mask.sum() == 0:
+                return 0.0, 0.0
+            top1_acc = np.sum((top1_predicted_labels == query_labels) & mask) / mask.sum()
+            top3_acc = np.sum([query_labels[i] in top3_predicted_labels[i] for i in range(len(query_labels)) if mask[i]]) / mask.sum()
+            return top1_acc, top3_acc
+
+        seen_top1, seen_top3 = masked_acc(seen_mask)
+        unseen_top1, unseen_top3 = masked_acc(unseen_mask)
+
+        print(f"[All] Top-1: {top1_accuracy:.4f} ({top1_accuracy:.2%}), Top-3: {top3_accuracy:.4f} ({top3_accuracy:.2%})")
+        print(f"[Seen ] Top-1: {seen_top1:.4f} ({seen_top1:.2%}), Top-3: {seen_top3:.4f} ({seen_top3:.2%})")
+        print(f"[Unseen] Top-1: {unseen_top1:.4f} ({unseen_top1:.2%}), Top-3: {unseen_top3:.4f} ({unseen_top3:.2%})")
+        print("-" * 40)
+
+        return {
+            "overall": (top1_accuracy, top3_accuracy),
+            "seen": (seen_top1, seen_top3),
+            "unseen": (unseen_top1, unseen_top3)
+        }
+    
+    def similarity_acc_mean(self,_label_list,_embedding_list):
+        ##############################
+        # mean data
+        ##############################
+        
+        label_to_indices = defaultdict(list)
+        for idx, label in enumerate(_label_list):
+            label_to_indices[label].append(idx)
+
+        unique_labels = sorted(list(label_to_indices.keys()))  
+        prototype_embeddings_list = []
+        for label in unique_labels:
+            indices = label_to_indices[label]
+            class_embeddings = _embedding_list[indices]
+            mean_embedding = np.mean(class_embeddings, axis=0)
+            prototype_embeddings_list.append(mean_embedding)
+
+        prototype_embeddings = np.array(prototype_embeddings_list)
+        prototype_labels = np.array(unique_labels)
+
+        query_embeddings = _embedding_list
+        query_labels = _label_list
+
+        num_features = np.prod(_embedding_list.shape[1:])
+        query_embeddings_flat = query_embeddings.reshape(len(query_labels), num_features)
+        prototype_embeddings_flat = prototype_embeddings.reshape(len(prototype_labels), num_features)
+        
+        similarities = cosine_similarity(query_embeddings_flat, prototype_embeddings_flat)
+
+        top_k_indices = np.argsort(-similarities, axis=1)
+        
+        top1_predicted_indices = top_k_indices[:, 0]
+        top1_predicted_labels = prototype_labels[top1_predicted_indices]
+        top1_correct_predictions = np.sum(top1_predicted_labels == query_labels)
+        top1_accuracy = top1_correct_predictions / len(query_labels)
+
+        top3_predicted_indices = top_k_indices[:, :3]
+        top3_predicted_labels = prototype_labels[top3_predicted_indices]
+        top3_correct_predictions = np.sum([query_labels[i] in top3_predicted_labels[i] for i in range(len(query_labels))])
+        top3_accuracy = top3_correct_predictions / len(query_labels)
+
+        print(f"  - Top-1: {top1_accuracy:.4f} ({top1_accuracy:.2%})")
+        print(f"  - Top-3: {top3_accuracy:.4f} ({top3_accuracy:.2%})")
+        print("-" * 20)
+        return top1_accuracy, top3_accuracy
+    
     def start(self):
         if self.arg.phase == 'train':
             self.print_log('Parameters:\n{}\n'.format(str(vars(self.arg))))
