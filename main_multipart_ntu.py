@@ -448,7 +448,7 @@ class Processor():
 
             # forward
             with torch.cuda.amp.autocast():
-                output, feature_dict, logit_scale, part_feature_list = self.model(data)
+                output, feature_dict, logit_scale, part_feature_list, embedding = self.model(data)
 
                 label_g = gen_label(label)
                 label = label.long().cuda(self.output_device)
