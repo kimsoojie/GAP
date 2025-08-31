@@ -36,7 +36,8 @@ class Feeder(Dataset):
         self.use_mmap = use_mmap
         self.repeat = repeat
         self.load_data()
-        #self.load_data_split()
+        #self.load_data_split_zsl()
+        #self.load_data_split_oneshot(split=5)
         if normalization:
             self.get_mean_map()
 
@@ -51,7 +52,7 @@ class Feeder(Dataset):
             value = np.array(skeletons)
             self.data.append(value)
 
-    def load_data_split(self):
+    def load_data_split_zsl(self):
         unique_labels = np.unique(self.label)
         num_unseen = 5
         step = max(1, len(unique_labels) // num_unseen)
@@ -64,6 +65,45 @@ class Feeder(Dataset):
         self.data = []
         self.label = []
         self.sample_name = []
+        for index in range(len(self.data_dict)):
+            info = self.data_dict[index]
+            label = int(info['label']) - 1
+            if label in seen_labels:
+                file_name = info['file_name']
+                with open(self.nw_ucla_root + file_name + '.json', 'r') as f:
+                    json_file = json.load(f)
+                skeletons = json_file['skeletons']
+                value = np.array(skeletons)
+                self.data.append(value)
+                self.label.append(label)
+                self.sample_name.append(file_name)
+    
+    def load_data_split_oneshot(self, split=5):
+        unique_labels = list(range(10))
+
+        base_unseen_labels = list(range(0, 10, 2))  # [0, 6, 12, ..., 114]
+
+        if split == 5: 
+            num_seen = 5
+        elif split == 3: 
+            num_seen = 3
+        else:
+            raise ValueError(f"Unsupported split: {split}")
+
+        remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
+
+        step = max(1, len(remaining_labels) // num_seen)
+        seen_labels = set(remaining_labels[::step][:num_seen])
+
+        unseen_labels = set(base_unseen_labels)
+
+        print(f"Unseen labels: {sorted(unseen_labels)}")
+        print(f"Seen labels: {sorted(seen_labels)}")
+
+        self.data = []
+        self.label = []
+        self.sample_name = []
+
         for index in range(len(self.data_dict)):
             info = self.data_dict[index]
             label = int(info['label']) - 1

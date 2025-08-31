@@ -610,6 +610,7 @@ class Processor():
             for i in range(500):
                 acc= self.similarity_acc_random(_label_list,_embedding_list)
                 #acc= self.similarity_acc_random_unseen_only(_label_list,_embedding_list)
+                #acc= self.similarity_acc_random_oneshot(_label_list,_embedding_list,split=5)
                 
                 top1_acc.append(acc['overall'][0])
                 top3_acc.append(acc['overall'][1])
@@ -794,7 +795,85 @@ class Processor():
             "seen": (seen_top1, seen_top3),
             "unseen": (unseen_top1, unseen_top3)
         }
-             
+    
+    def similarity_acc_random_oneshot(self, _label_list, _embedding_list, split=5):
+   
+        unique_labels = list(range(10))
+        base_unseen_labels = list(range(0, 10, 5))  # [0,6,12,...,114]
+
+        num_seen = split
+
+        remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
+        step = max(1, len(remaining_labels) // num_seen)
+        seen_labels = set(remaining_labels[::step][:num_seen])
+
+        unseen_labels = set(base_unseen_labels)
+
+        print(f"Unseen labels: {sorted(unseen_labels)}")
+        print(f"Seen labels: {sorted(seen_labels)}")
+
+        # --- prototype per class ---
+        num_samples = len(_label_list)
+        label_to_indices = defaultdict(list)
+        for idx, label in enumerate(_label_list):
+            label_to_indices[label].append(idx)
+
+        unique_labels_present = list(label_to_indices.keys())
+        prototype_indices = []
+        for label in unique_labels_present:
+            prototype_idx = np.random.choice(label_to_indices[label])
+            prototype_indices.append(prototype_idx)
+
+        all_indices = set(range(num_samples))
+        query_indices = list(all_indices - set(prototype_indices))
+
+        prototype_embeddings = _embedding_list[prototype_indices]
+        prototype_labels = _label_list[prototype_indices]
+        query_embeddings = _embedding_list[query_indices]
+        query_labels = _label_list[query_indices]
+
+        num_features = np.prod(_embedding_list.shape[1:])
+        prototype_embeddings_flat = prototype_embeddings.reshape(len(prototype_labels), num_features)
+        query_embeddings_flat = query_embeddings.reshape(len(query_labels), num_features)
+
+        similarities = cosine_similarity(query_embeddings_flat, prototype_embeddings_flat)
+        top_k_indices = np.argsort(-similarities, axis=1)
+
+        top1_predicted_indices = top_k_indices[:, 0]
+        top1_predicted_labels = prototype_labels[top1_predicted_indices]
+        top3_predicted_indices = top_k_indices[:, :3]
+        top3_predicted_labels = prototype_labels[top3_predicted_indices]
+
+        top1_correct_predictions = np.sum(top1_predicted_labels == query_labels)
+        top1_accuracy = top1_correct_predictions / len(query_labels)
+
+        top3_correct_predictions = np.sum([query_labels[i] in top3_predicted_labels[i] for i in range(len(query_labels))])
+        top3_accuracy = top3_correct_predictions / len(query_labels)
+
+        seen_mask = np.array([lbl in seen_labels for lbl in query_labels])
+        unseen_mask = np.array([lbl in unseen_labels for lbl in query_labels])
+
+        def masked_acc(mask):
+            if mask.sum() == 0:
+                return 0.0, 0.0
+            top1_acc = np.sum((top1_predicted_labels == query_labels) & mask) / mask.sum()
+            top3_acc = np.sum([query_labels[i] in top3_predicted_labels[i] for i in range(len(query_labels)) if mask[i]]) / mask.sum()
+            return top1_acc, top3_acc
+
+        seen_top1, seen_top3 = masked_acc(seen_mask)
+        unseen_top1, unseen_top3 = masked_acc(unseen_mask)
+
+        print(f"[All] Top-1: {top1_accuracy:.4f} ({top1_accuracy:.2%}), Top-3: {top3_accuracy:.4f} ({top3_accuracy:.2%})")
+        print(f"[Seen ] Top-1: {seen_top1:.4f} ({seen_top1:.2%}), Top-3: {seen_top3:.4f} ({seen_top3:.2%})")
+        print(f"[Unseen] Top-1: {unseen_top1:.4f} ({unseen_top1:.2%}), Top-3: {unseen_top3:.4f} ({unseen_top3:.2%})")
+        print("-" * 40)
+
+        return {
+            "overall": (top1_accuracy, top3_accuracy),
+            "seen": (seen_top1, seen_top3),
+            "unseen": (unseen_top1, unseen_top3)
+        }
+        
     def similarity_acc_random(self, _label_list, _embedding_list):
         ##############################
         # random sampling 
