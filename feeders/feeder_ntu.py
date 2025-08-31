@@ -139,6 +139,8 @@ class Feeder_hard(Dataset):
         self.bone = bone
         self.vel = vel
         self.load_data()
+        #self.load_data_split_zsl(split=10)
+        #self.load_data_split_oneshot(split=3)
         if normalization:
             self.get_mean_map()
 
