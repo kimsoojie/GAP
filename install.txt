@@ -8,3 +8,9 @@ pip install torchpack==0.1.3
 
 pip install numpy==1.24.4
 
+
+# ucla train
+CUDA_VISIBLE_DEVICES=2,3 python main_multipart_ucla.py --config config/ucla/lst_joint.yaml --model model.ctrgcn.Model_lst_4part_ucla --work-dir work_dir/ucla/split5/lst_joint --device 0 1
+
+# ntu train
+CUDA_VISIBLE_DEVICES=2,3 python main_multipart_ntu.py --config config/nturgbd120-cross-set/lst_joint.yaml --model model.ctrgcn.Model_lst_4part --work-dir work_dir/ntu120/oneshot/split100/cset/lst_joint --device 0 1

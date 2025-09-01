@@ -81,20 +81,21 @@ class Feeder(Dataset):
     def load_data_split_oneshot(self, split=5):
         unique_labels = list(range(10))
 
-        base_unseen_labels = list(range(0, 10, 2))  # [0, 6, 12, ..., 114]
+        base_unseen_labels = list(range(0, 10, 2))  # [0, 2, 4, 6, 8]
 
         if split == 5: 
-            num_seen = 5
+            num_seen = 5 # [1, 3, 5, 7, 9]
         elif split == 3: 
-            num_seen = 3
+            num_seen = 3 # [1, 5, 9]
         else:
             raise ValueError(f"Unsupported split: {split}")
 
         remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
-
-        step = max(1, len(remaining_labels) // num_seen)
-        seen_labels = set(remaining_labels[::step][:num_seen])
-
+        if len(remaining_labels) >= num_seen:
+            indices = np.linspace(0, len(remaining_labels)-1, num_seen, dtype=int)
+            seen_labels = [remaining_labels[i] for i in indices]
+        else:
+            seen_labels = remaining_labels
         unseen_labels = set(base_unseen_labels)
 
         print(f"Unseen labels: {sorted(unseen_labels)}")

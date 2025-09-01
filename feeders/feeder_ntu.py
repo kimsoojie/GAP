@@ -241,8 +241,11 @@ class Feeder_hard(Dataset):
         elif split == 100: num_seen=100
         
         remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
-        step = max(1, len(remaining_labels) // num_seen)
-        seen_labels = set(remaining_labels[::step][:num_seen])
+        if len(remaining_labels) >= num_seen:
+            indices = np.linspace(0, len(remaining_labels)-1, num_seen, dtype=int)
+            seen_labels = [remaining_labels[i] for i in indices]
+        else:
+            seen_labels = remaining_labels
         unseen_labels = set(base_unseen_labels)
         print(f"Unseen labels: {sorted(unseen_labels)}")
         print(f"Seen labels: {sorted(seen_labels)}")
