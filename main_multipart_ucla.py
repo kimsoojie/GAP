@@ -729,10 +729,14 @@ class Processor():
 
         candidate_seen_labels = [lbl for lbl in unique_labels if lbl not in unseen_labels]
 
-        seen_labels = candidate_seen_labels[::split]
+        if len(candidate_seen_labels) >= split:
+            indices = np.linspace(0, len(candidate_seen_labels) - 1, split, dtype=int)
+            seen_labels = [candidate_seen_labels[i] for i in indices]
+        else:
+            seen_labels = candidate_seen_labels  
 
         print(f"Unseen labels: {sorted(unseen_labels)}")
-        print(f"Seen labels (interval={split}): {seen_labels}")
+        print(f"Seen labels: {seen_labels}")
 
         prototype_indices = []
         for label in unique_labels:
@@ -786,8 +790,8 @@ class Processor():
         seen_top1, seen_top3 = eval_subset(seen_query_mask, seen_proto_mask)
         unseen_top1, unseen_top3 = eval_subset(unseen_query_mask, unseen_proto_mask)
 
-        print(f"[Overall ] Top-1: {overall_top1:.4f} ({overall_top1:.2%}), Top-3: {overall_top3:.4f} ({overall_top3:.2%})")
-        print(f"[Seen ] Top-1: {seen_top1:.4f} ({seen_top1:.2%}), Top-3: {seen_top3:.4f} ({seen_top3:.2%})")
+        print(f"[Overall] Top-1: {overall_top1:.4f} ({overall_top1:.2%}), Top-3: {overall_top3:.4f} ({overall_top3:.2%})")
+        print(f"[Seen] Top-1: {seen_top1:.4f} ({seen_top1:.2%}), Top-3: {seen_top3:.4f} ({seen_top3:.2%})")
         print(f"[Unseen] Top-1: {unseen_top1:.4f} ({unseen_top1:.2%}), Top-3: {unseen_top3:.4f} ({unseen_top3:.2%})")
         print("-" * 40)
 
