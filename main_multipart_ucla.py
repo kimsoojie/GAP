@@ -586,7 +586,7 @@ class Processor():
             #_data_list =  np.concatenate(_data_list)
             #_label_list =  np.concatenate(_label_list) # (59477,)
             #_embedding_list =  np.concatenate(_embedding_list)
-            #np.savez("embedding_512_test_split10_ntu120.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
+            #np.savez("embedding_l10_test_split10_nucla.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
             #####################################################################################################
           
             #####################################################################################################
@@ -597,20 +597,17 @@ class Processor():
             _data_list = loaded["data"]
             _label_list = loaded["label"]
             _embedding_list = loaded["embedding"]
-            #_embedding_list = self.pca_convert(_embedding_list)
             #self.visualization(_embedding_list,_label_list)
           
-            #_data_list,_label_list,_embedding_list = self.sample_embedding(_data_list,_label_list,_embedding_list)
             top1_acc = []
             top3_acc = []
             top1_acc_seen = []
             top1_acc_unseen= []
-            #acc1, acc3 = self.similarity_acc_mean(_label_list,_embedding_list)
             
             for i in range(500):
-                acc= self.similarity_acc_random(_label_list,_embedding_list)
-                #acc= self.similarity_acc_random_unseen_only(_label_list,_embedding_list)
-                #acc= self.similarity_acc_random_oneshot(_label_list,_embedding_list,split=5)
+                #acc= self.similarity_acc_random_zsl(_label_list,_embedding_list)
+                #acc= self.similarity_acc_random_unseen_only(_label_list,_embedding_list, spit=3)
+                acc= self.similarity_acc_random_oneshot(_label_list,_embedding_list,num_seen=5)
                 
                 top1_acc.append(acc['overall'][0])
                 top3_acc.append(acc['overall'][1])
@@ -719,19 +716,24 @@ class Processor():
         #plt.legend()
         plt.savefig("tsne_plot.png")
     
-    def similarity_acc_random_unseen_only(self, _label_list, _embedding_list, split=10):
+    def similarity_acc_random_unseen_only(self, _label_list, _embedding_list, split=5):
         # seen/unseen split
         unseen_labels = {0, 2, 4, 6, 8}
-        
+
         num_samples = len(_label_list)
         label_to_indices = defaultdict(list)
         for idx, label in enumerate(_label_list):
             label_to_indices[label].append(idx)
 
-        unique_labels = list(label_to_indices.keys())
-        num_classes = len(unique_labels)
+        unique_labels = sorted(label_to_indices.keys())
 
-        # 클래스별 프로토타입 하나씩 선택
+        candidate_seen_labels = [lbl for lbl in unique_labels if lbl not in unseen_labels]
+
+        seen_labels = candidate_seen_labels[::split]
+
+        print(f"Unseen labels: {sorted(unseen_labels)}")
+        print(f"Seen labels (interval={split}): {seen_labels}")
+
         prototype_indices = []
         for label in unique_labels:
             prototype_idx = np.random.choice(label_to_indices[label])
@@ -749,10 +751,10 @@ class Processor():
         prototype_embeddings_flat = prototype_embeddings.reshape(len(prototype_labels), num_features)
         query_embeddings_flat = query_embeddings.reshape(len(query_labels), num_features)
 
-        # === seen/unseen 분리 ===
-        seen_proto_mask = np.array([lbl not in unseen_labels for lbl in prototype_labels])
+        # === seen/unseen ===
+        seen_proto_mask = np.array([lbl in seen_labels for lbl in prototype_labels])
         unseen_proto_mask = np.array([lbl in unseen_labels for lbl in prototype_labels])
-        seen_query_mask = np.array([lbl not in unseen_labels for lbl in query_labels])
+        seen_query_mask = np.array([lbl in seen_labels for lbl in query_labels])
         unseen_query_mask = np.array([lbl in unseen_labels for lbl in query_labels])
 
         def eval_subset(query_mask, proto_mask):
@@ -773,7 +775,6 @@ class Processor():
             top3_acc = np.mean([q_labels[i] in top3_predicted_labels[i] for i in range(len(q_labels))])
             return top1_acc, top3_acc
 
-        # 전체 (seen/unseen 구분 안함 → 원래 방식 유지)
         sims = cosine_similarity(query_embeddings_flat, prototype_embeddings_flat)
         top_k_indices = np.argsort(-sims, axis=1)
         top1_predicted_labels = prototype_labels[top_k_indices[:, 0]]
@@ -781,11 +782,11 @@ class Processor():
         overall_top1 = np.mean(top1_predicted_labels == query_labels)
         overall_top3 = np.mean([query_labels[i] in top3_predicted_labels[i] for i in range(len(query_labels))])
 
-        # seen/unseen 별 계산
+        # seen/unseen 
         seen_top1, seen_top3 = eval_subset(seen_query_mask, seen_proto_mask)
         unseen_top1, unseen_top3 = eval_subset(unseen_query_mask, unseen_proto_mask)
 
-        print(f"[전체 ] Top-1: {overall_top1:.4f} ({overall_top1:.2%}), Top-3: {overall_top3:.4f} ({overall_top3:.2%})")
+        print(f"[Overall ] Top-1: {overall_top1:.4f} ({overall_top1:.2%}), Top-3: {overall_top3:.4f} ({overall_top3:.2%})")
         print(f"[Seen ] Top-1: {seen_top1:.4f} ({seen_top1:.2%}), Top-3: {seen_top3:.4f} ({seen_top3:.2%})")
         print(f"[Unseen] Top-1: {unseen_top1:.4f} ({unseen_top1:.2%}), Top-3: {unseen_top3:.4f} ({unseen_top3:.2%})")
         print("-" * 40)
@@ -796,12 +797,12 @@ class Processor():
             "unseen": (unseen_top1, unseen_top3)
         }
     
-    def similarity_acc_random_oneshot(self, _label_list, _embedding_list, split=5):
+    def similarity_acc_random_oneshot(self, _label_list, _embedding_list, num_seen=5):
    
         unique_labels = list(range(10))
-        base_unseen_labels = list(range(0, 10, 5))  # [0,6,12,...,114]
+        base_unseen_labels = list(range(0, 10, 2))  
 
-        num_seen = split
+        num_seen = num_seen
 
         remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
         step = max(1, len(remaining_labels) // num_seen)

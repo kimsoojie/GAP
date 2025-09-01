@@ -584,20 +584,18 @@ class Processor():
             #_data_list =  np.concatenate(_data_list)
             #_label_list =  np.concatenate(_label_list) # (59477,)
             #_embedding_list =  np.concatenate(_embedding_list)
-            #np.savez("embedding_512_test_split10_ntu120.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
+            #np.savez("embedding_l10_test_split10_ntu120.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
             #####################################################################################################
           
             #####################################################################################################
             # embedding similarity
             #####################################################################################################
             '''
-            #loaded = np.load("embeddings_ntu120/split24/embedding_l10_test_split24_ntu120.npz")
             loaded = np.load('embeddings_ntu120/split10/embedding_l10_test_split10_ntu120.npz')
             _data_list = loaded["data"]
             _label_list = loaded["label"]
             _embedding_list = loaded["embedding"]
             _data_list,_label_list,_embedding_list = self.sample_embedding(_data_list,_label_list,_embedding_list)
-            #_embedding_list = self.pca_convert(_embedding_list)
             #self.visualization(_embedding_list,_label_list)
             
             top1_acc = []
@@ -607,9 +605,9 @@ class Processor():
             #acc1, acc3 = self.similarity_acc_mean(_label_list,_embedding_list)
             
             for i in range(500):
-                acc= self.similarity_acc_random(_label_list,_embedding_list,split=10)
-                #acc = self.similarity_acc_random_unseen_only(_label_list,_embedding_list,split=10)
-                #acc = self.similarity_acc_random_oneshot(_label_list,_embedding_list,split=100)
+                #acc= self.similarity_acc_random_zsl(_label_list,_embedding_list,split=10)
+                #acc = self.similarity_acc_random_unseen_only(_label_list, _embedding_list, oneshot=False, zsl_split=10)
+                acc = self.similarity_acc_random_oneshot(_label_list,_embedding_list,num_seen=100)
                 
                 top1_acc.append(acc['overall'][0])
                 top3_acc.append(acc['overall'][1])
@@ -718,16 +716,17 @@ class Processor():
         #plt.legend()
         plt.savefig("tsne_plot.png")
         
-    def similarity_acc_random_unseen_only(self, _label_list, _embedding_list, split=10):
-        
-        if split == 10:
-            unseen_labels = {0, 12, 24, 36, 48, 60, 72, 84, 96, 108}
-        elif split == 24:
-            unseen_labels = {0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115}
-        elif split == 40:
-            unseen_labels = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108, 111, 114, 117}
-        elif split == 60:
-            unseen_labels = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118}
+    def similarity_acc_random_unseen_only(self, _label_list, _embedding_list, oneshot=False, zsl_split=10):
+        if oneshot == True: unseen_labels = list(range(0,120,6))
+        else:
+            if zsl_split == 10:
+                unseen_labels = {0, 12, 24, 36, 48, 60, 72, 84, 96, 108}
+            elif zsl_split == 24:
+                unseen_labels = {0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115}
+            elif zsl_split == 40:
+                unseen_labels = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108, 111, 114, 117}
+            elif zsl_split == 60:
+                unseen_labels = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118}
         
         num_samples = len(_label_list)
         label_to_indices = defaultdict(list)
@@ -802,7 +801,7 @@ class Processor():
 
     
     
-    def similarity_acc_random(self, _label_list, _embedding_list, split=10):
+    def similarity_acc_random_zsl(self, _label_list, _embedding_list, split=10):
         ##############################
         # random sampling 
         ##############################
@@ -880,12 +879,12 @@ class Processor():
             "unseen": (unseen_top1, unseen_top3)
         }
     
-    def similarity_acc_random_oneshot(self, _label_list, _embedding_list, split=100):
+    def similarity_acc_random_oneshot(self, _label_list, _embedding_list, num_seen=100):
    
         unique_labels = list(range(120))
         base_unseen_labels = list(range(0, 120, 6))  # [0,6,12,...,114]
 
-        num_seen = split
+        num_seen = num_seen
 
         remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
         step = max(1, len(remaining_labels) // num_seen)
