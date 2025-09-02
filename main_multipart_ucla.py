@@ -668,8 +668,9 @@ class Processor():
         for label in unique_labels:
             label_indices = np.where(_label_list == label)[0]
             
-            step = len(label_indices) / samples
-            chosen_indices = [label_indices[int(i * step)] for i in range(10)]
+            chosen_indices = label_indices[
+                np.linspace(0, len(label_indices)-1, samples, dtype=int)
+            ]
             
             sample_data.append(_data_list[chosen_indices])
             sample_embeddings.append(_embedding_list[chosen_indices])
@@ -679,7 +680,7 @@ class Processor():
         sample_embeddings = np.concatenate(sample_embeddings, axis=0)
         sample_labels = np.concatenate(sample_labels, axis=0)
         return sample_data, sample_labels, sample_embeddings
-
+    
     def pca_convert(self,_embedding_list):
         n_samples = _embedding_list.shape[0]
         flattened_embeddings = _embedding_list.reshape(n_samples, -1)

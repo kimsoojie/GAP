@@ -452,6 +452,8 @@ class Model_lst_4part(nn.Module):
         x = self.l8(x)
         x = self.l9(x)
         x = self.l10(x)
+        
+        embedding = x
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -470,8 +472,6 @@ class Model_lst_4part(nn.Module):
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
 
-        embedding = x
-        
         feature_dict = dict()
 
         for name in self.head:
@@ -707,8 +707,6 @@ class Model_lst_4part_ucla(nn.Module):
         x = self.l3(x) # torch.Size([260, 64, 52, 20])
         x = self.l4(x) # torch.Size([260, 64, 52, 20])
         
-        #embedding = x #1
-        
         x = self.l5(x) # torch.Size([260, 128, 26, 20])
         x = self.l6(x) # torch.Size([260, 128, 26, 20])
         x = self.l7(x) # torch.Size([260, 128, 26, 20])
@@ -716,7 +714,7 @@ class Model_lst_4part_ucla(nn.Module):
         x = self.l9(x) # torch.Size([260, 256, 13, 20])
         x = self.l10(x) # torch.Size([260, 256, 13, 20])
         
-        embedding = x #2
+        embedding = x 
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -735,8 +733,6 @@ class Model_lst_4part_ucla(nn.Module):
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
         
-        #embedding = x #3
-
         feature_dict = dict()
 
         for name in self.head:
