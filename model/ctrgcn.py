@@ -453,7 +453,7 @@ class Model_lst_4part(nn.Module):
         x = self.l9(x)
         x = self.l10(x)
         
-        embedding = x
+        embedding = x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
 
         # N*M,C,T,V
         c_new = x.size(1)
