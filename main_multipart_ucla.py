@@ -36,6 +36,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+from skeleton_label_text import text_ucla
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part_ucla()
 
@@ -688,6 +689,52 @@ class Processor():
         reduced_embeddings = pca.fit_transform(flattened_embeddings)
         return reduced_embeddings
     
+    def visualization2(self,_embedding_list, _label_list, num_samples=50, save_path="tsne.png"):
+        # (N, ...) → (N, D) flatten or mean-pool
+        if _embedding_list.ndim > 2:
+            embeddings_flat = _embedding_list.mean(axis=tuple(range(2, _embedding_list.ndim)))
+        else:
+            embeddings_flat = _embedding_list.reshape(_embedding_list.shape[0], -1)
+
+        label_to_embeddings = {}
+        for emb, label in zip(embeddings_flat, _label_list):
+            if label not in label_to_embeddings:
+                label_to_embeddings[label] = []
+            label_to_embeddings[label].append(emb)
+
+        sampled_embeddings = []
+        sampled_labels = []
+
+        for label, embeddings in label_to_embeddings.items():
+            sampled = random.sample(embeddings, min(num_samples, len(embeddings)))
+            sampled_embeddings.extend(sampled)
+            sampled_labels.extend([label] * len(sampled))
+
+        sampled_embeddings = np.array(sampled_embeddings)
+        sampled_labels = np.array(sampled_labels)
+
+        # TSNE
+        tsne = TSNE(n_components=2, random_state=42)
+        embeddings_2d = tsne.fit_transform(sampled_embeddings)
+
+        # Plot
+        plt.figure(figsize=(8, 6))
+        for label in np.unique(sampled_labels):
+            idx = sampled_labels == label
+            plt.scatter(
+                embeddings_2d[idx, 0],
+                embeddings_2d[idx, 1],
+                label=str(text_ucla[label]),
+                alpha=0.7,
+                s=20
+            )
+
+        plt.legend()
+        plt.xlabel("X")
+        plt.ylabel("Y")
+        plt.savefig(save_path)
+        plt.close()
+        
     def visualization(self, _embedding_list, _label_list):
         embeddings_flat = _embedding_list.reshape(_embedding_list.shape[0], -1)  # (464, 66560)
 
