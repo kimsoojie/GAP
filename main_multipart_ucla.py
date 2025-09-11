@@ -37,6 +37,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from skeleton_label_text import text_ucla
+import torch.nn.functional as F
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part_ucla()
 
@@ -587,6 +588,7 @@ class Processor():
             #_data_list =  np.concatenate(_data_list)
             #_label_list =  np.concatenate(_label_list) # (59477,)
             #_embedding_list =  np.concatenate(_embedding_list)
+            #_embedding_list=np.array(F.normalize(torch.tensor(_embedding_list), p=2, dim=1))
             #np.savez("embedding_l10_test_split10_nucla.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
             #####################################################################################################
           

@@ -280,8 +280,9 @@ class TCN_GCN_unit(nn.Module):
             self.residual = unit_tcn(in_channels, out_channels, kernel_size=1, stride=stride)
 
     def forward(self, x):
+        f = self.tcn1(self.gcn1(x)) + self.residual(x)
         y = self.relu(self.tcn1(self.gcn1(x)) + self.residual(x))
-        return y
+        return y, f
 
 class Model(nn.Module):
     def __init__(self, num_class=60, num_point=25, num_person=2, graph=None, graph_args=dict(), in_channels=3,
@@ -442,18 +443,18 @@ class Model_lst_4part(nn.Module):
         x = rearrange(x, '(n m t) v c -> n (m v c) t', m=M, t=T).contiguous()
         x = self.data_bn(x)
         x = x.view(N, M, V, C, T).permute(0, 1, 3, 4, 2).contiguous().view(N * M, C, T, V)
-        x = self.l1(x)
-        x = self.l2(x)
-        x = self.l3(x)
-        x = self.l4(x)
-        x = self.l5(x)
-        x = self.l6(x)
-        x = self.l7(x)
-        x = self.l8(x)
-        x = self.l9(x)
-        x = self.l10(x)
+        x,_ = self.l1(x)
+        x,_ = self.l2(x)
+        x,_ = self.l3(x)
+        x,_ = self.l4(x)
+        x,_ = self.l5(x)
+        x,_ = self.l6(x)
+        x,_ = self.l7(x)
+        x,_ = self.l8(x)
+        x,_ = self.l9(x)
+        x,f = self.l10(x)
         
-        embedding = x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
+        embedding = f.view(N,x.shape[1],x.shape[2],x.shape[3],M) #x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -702,19 +703,19 @@ class Model_lst_4part_ucla(nn.Module):
         x = rearrange(x, '(n m t) v c -> n (m v c) t', m=M, t=T).contiguous()
         x = self.data_bn(x)
         x = x.view(N, M, V, C, T).permute(0, 1, 3, 4, 2).contiguous().view(N * M, C, T, V)
-        x = self.l1(x) # torch.Size([260, 64, 52, 20])
-        x = self.l2(x) # torch.Size([260, 64, 52, 20])
-        x = self.l3(x) # torch.Size([260, 64, 52, 20])
-        x = self.l4(x) # torch.Size([260, 64, 52, 20])
+        x,_ = self.l1(x) # torch.Size([260, 64, 52, 20])
+        x,_ = self.l2(x) # torch.Size([260, 64, 52, 20])
+        x,_ = self.l3(x) # torch.Size([260, 64, 52, 20])
+        x,_ = self.l4(x) # torch.Size([260, 64, 52, 20])
         
-        x = self.l5(x) # torch.Size([260, 128, 26, 20])
-        x = self.l6(x) # torch.Size([260, 128, 26, 20])
-        x = self.l7(x) # torch.Size([260, 128, 26, 20])
-        x = self.l8(x) # torch.Size([260, 256, 13, 20])
-        x = self.l9(x) # torch.Size([260, 256, 13, 20])
-        x = self.l10(x) # torch.Size([260, 256, 13, 20])
+        x,_ = self.l5(x) # torch.Size([260, 128, 26, 20])
+        x,_ = self.l6(x) # torch.Size([260, 128, 26, 20])
+        x,_ = self.l7(x) # torch.Size([260, 128, 26, 20])
+        x,_ = self.l8(x) # torch.Size([260, 256, 13, 20])
+        x,_ = self.l9(x) # torch.Size([260, 256, 13, 20])
+        x,f = self.l10(x) # torch.Size([260, 256, 13, 20])
         
-        embedding = x 
+        embedding = f #x 
 
         # N*M,C,T,V
         c_new = x.size(1)
