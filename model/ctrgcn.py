@@ -454,7 +454,7 @@ class Model_lst_4part(nn.Module):
         x,_ = self.l9(x)
         x,f = self.l10(x)
         
-        embedding = f.view(N,x.shape[1],x.shape[2],x.shape[3],M) #x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
+        embedding = x.view(N,x.shape[1],x.shape[2],x.shape[3],M) #x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -715,7 +715,7 @@ class Model_lst_4part_ucla(nn.Module):
         x,_ = self.l9(x) # torch.Size([260, 256, 13, 20])
         x,f = self.l10(x) # torch.Size([260, 256, 13, 20])
         
-        embedding = f #x 
+        embedding = x 
 
         # N*M,C,T,V
         c_new = x.size(1)
