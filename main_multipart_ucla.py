@@ -820,6 +820,7 @@ class Processor():
             p_labels = prototype_labels[proto_mask]
 
             sims = cosine_similarity(q_emb, p_emb)
+           
             top_k_indices = np.argsort(-sims, axis=1)
 
             top1_predicted_labels = p_labels[top_k_indices[:, 0]]
@@ -895,6 +896,7 @@ class Processor():
         query_embeddings_flat = query_embeddings.reshape(len(query_labels), num_features)
 
         similarities = cosine_similarity(query_embeddings_flat, prototype_embeddings_flat)
+        
         top_k_indices = np.argsort(-similarities, axis=1)
 
         top1_predicted_indices = top_k_indices[:, 0]
