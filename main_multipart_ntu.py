@@ -587,7 +587,7 @@ class Processor():
             #_label_list =  np.concatenate(_label_list) # (59477,)
             #_embedding_list =  np.concatenate(_embedding_list)
             #_data_list,_label_list,_embedding_list = self.sample_embedding(_data_list,_label_list,_embedding_list)
-            #_embedding_list=np.array(F.normalize(torch.tensor(_embedding_list), p=2, dim=1))
+            ##_embedding_list=np.array(F.normalize(torch.tensor(_embedding_list), p=2, dim=1))
             #np.savez("embedding_l10_test_split10_ntu120.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
             #####################################################################################################
           
