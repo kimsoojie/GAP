@@ -38,6 +38,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from skeleton_label_text import text_ucla
 import torch.nn.functional as F
+from matplotlib.patches import Patch
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part_ucla()
 
@@ -691,6 +692,40 @@ class Processor():
         reduced_embeddings = pca.fit_transform(flattened_embeddings)
         return reduced_embeddings
     
+    def visualization_embed_distr(self, _embedding_list, _label_list, num_seen=5):
+        unseen_labels = [0, 2, 4, 6, 8]
+        if num_seen == 5:
+            seen_labels = [1,3,5,7,9]
+        if num_seen == 3:
+            seen_labels = [1, 5, 9]
+        
+        # seen/unseen masks
+        seen_mask = np.isin(_label_list, seen_labels)
+        unseen_mask = np.isin(_label_list, unseen_labels)
+
+        seen_embeddings = _embedding_list[seen_mask]
+        unseen_embeddings = _embedding_list[unseen_mask]
+
+        plt.figure(figsize=(14, 7))
+        
+        for emb in seen_embeddings:
+            plt.fill_between(range(len(emb.flatten())), emb.flatten(), color='green', alpha=0.3)
+            
+        for emb in unseen_embeddings:
+            plt.fill_between(range(len(emb.flatten())), emb.flatten(), color='orange', alpha=0.3)
+         
+        legend_elements = [
+            Patch(facecolor='green', alpha=0.3, label='Seen'),
+            Patch(facecolor='orange', alpha=0.3, label='Unseen')
+        ]
+        plt.legend(handles=legend_elements)
+
+        plt.xlabel("Embedding Index")
+        plt.ylabel("Embedding Value")
+        plt.title("Embedding Distribution")
+        plt.grid(True)
+        plt.savefig('plot.png')
+        
     def visualization2(self,_embedding_list, _label_list, num_samples=50, save_path="tsne.png"):
         # (N, ...) → (N, D) flatten or mean-pool
         if _embedding_list.ndim > 2:

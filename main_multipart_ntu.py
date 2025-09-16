@@ -38,6 +38,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from skeleton_label_text import text_ucla, text_ntu120
 import torch.nn.functional as F
+from matplotlib.patches import Patch
 
 classes, num_text_aug, text_dict = text_prompt_openai_pasta_pool_4part()
 text_list = text_prompt_openai_random()
@@ -692,6 +693,47 @@ class Processor():
         reduced_embeddings = pca.fit_transform(flattened_embeddings)
         return reduced_embeddings
     
+    def visualization_embed_distr(self,_embedding_list, _label_list, num_seen=100):
+    
+        unseen_labels = list(range(0, 120, 6))
+
+        candidate_seen_labels = [label for label in range(120) if label not in unseen_labels]
+
+        if len(candidate_seen_labels) <= num_seen:
+            seen_labels = candidate_seen_labels
+        else:
+            indices = np.linspace(0, len(candidate_seen_labels) - 1, num_seen, dtype=int)
+            seen_labels = [candidate_seen_labels[i] for i in indices]
+        
+        print(f"Unseen labels: {sorted(unseen_labels)}")
+        print(f"Seen labels: {sorted(seen_labels)}")
+        
+        seen_mask = np.isin(_label_list, seen_labels)
+        unseen_mask = np.isin(_label_list, unseen_labels)
+
+        seen_embeddings = _embedding_list[seen_mask]
+        unseen_embeddings = _embedding_list[unseen_mask]
+
+        plt.figure(figsize=(14, 7))
+
+        for emb in seen_embeddings:
+            plt.fill_between(range(len(emb.flatten())), emb.flatten(), color='green', alpha=0.3)
+
+        for emb in unseen_embeddings:
+            plt.fill_between(range(len(emb.flatten())), emb.flatten(), color='orange', alpha=0.3)
+
+        legend_elements = [
+            Patch(facecolor='green', alpha=0.3, label='Seen'),
+            Patch(facecolor='orange', alpha=0.3, label='Unseen')
+        ]
+        plt.legend(handles=legend_elements)
+
+        plt.xlabel("Embedding Index")
+        plt.ylabel("Embedding Value")
+        plt.title("Embedding Distribution")
+        plt.grid(True)
+        plt.savefig('plot.png')
+        
     def visualization2(self,_embedding_list, _label_list, num_samples=50, save_path="tsne.png"):
         # (N, ...) → (N, D) flatten or mean-pool
         if _embedding_list.ndim > 2:
