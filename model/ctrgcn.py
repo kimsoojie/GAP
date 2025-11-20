@@ -454,7 +454,7 @@ class Model_lst_4part(nn.Module):
         x,_ = self.l9(x)
         x,f = self.l10(x)
         
-        embedding = x.view(N,x.shape[1],x.shape[2],x.shape[3],M) #x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
+        #embedding = x.view(N,x.shape[1],x.shape[2],x.shape[3],M) #x.view(N,x.shape[1],x.shape[2],x.shape[3],M)
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -472,6 +472,8 @@ class Model_lst_4part(nn.Module):
 
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
+        
+        embedding = x
 
         feature_dict = dict()
 
@@ -714,9 +716,7 @@ class Model_lst_4part_ucla(nn.Module):
         x,_ = self.l8(x) # torch.Size([260, 256, 13, 20])
         x,_ = self.l9(x) # torch.Size([260, 256, 13, 20])
         x,f = self.l10(x) # torch.Size([260, 256, 13, 20])
-        
-        embedding = x 
-
+    
         # N*M,C,T,V
         c_new = x.size(1)
 
@@ -730,9 +730,11 @@ class Model_lst_4part_ucla(nn.Module):
         foot_feature = self.part_list[2](feature[:,:,:,:,foot_list].mean(4).mean(3).mean(1))
         hip_feature = self.part_list[3](feature[:,:,:,:,hip_list].mean(4).mean(3).mean(1))
 
-
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
+        
+        embedding = x 
+
         
         feature_dict = dict()
 
