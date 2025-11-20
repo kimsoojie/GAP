@@ -83,7 +83,7 @@ def get_label_split_zsl(config, num_split):
     
     return seen_labels, unseen_labels
 
-def one_shot_evaluation(self, config='ucla', unseen_split=5, llm_embeddings=None, labels=None, num_trials=500):
+def one_shot_evaluation(config='ucla', unseen_split=5, llm_embeddings=None, labels=None, num_trials=500):
         """
         One-shot learning evaluation: randomly select one reference sample per label
         and predict labels based on cosine similarity.
@@ -99,7 +99,7 @@ def one_shot_evaluation(self, config='ucla', unseen_split=5, llm_embeddings=None
         """
         config =config
         unseen_split = unseen_split
-        seen_labels, unseen_labels = self.get_label_split_oneshot(config, unseen_split)
+        seen_labels, unseen_labels = get_label_split_oneshot(config, unseen_split)
         
         if isinstance(llm_embeddings, torch.Tensor):
             llm_embeddings = llm_embeddings.float().cpu().numpy()
