@@ -14,7 +14,7 @@ train_feeder_args:
   random_rot: True
   p_interval: [0.5, 1]
   vel: True
-  bone: False
+  bone: True
 
 test_feeder_args:
   data_path: data/ntu/NTU60_CS.npz
@@ -22,7 +22,7 @@ test_feeder_args:
   window_size: 64
   p_interval: [0.95]
   vel: True
-  bone: False
+  bone: True
   debug: False
 
 # model
