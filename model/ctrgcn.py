@@ -574,16 +574,16 @@ class Model_lst_4part_bone(nn.Module):
         x = rearrange(x, '(n m t) v c -> n (m v c) t', m=M, t=T).contiguous()
         x = self.data_bn(x)
         x = x.view(N, M, V, C, T).permute(0, 1, 3, 4, 2).contiguous().view(N * M, C, T, V)
-        x = self.l1(x)
-        x = self.l2(x)
-        x = self.l3(x)
-        x = self.l4(x)
-        x = self.l5(x)
-        x = self.l6(x)
-        x = self.l7(x)
-        x = self.l8(x)
-        x = self.l9(x)
-        x = self.l10(x)
+        x,_ = self.l1(x)
+        x,_ = self.l2(x)
+        x,_ = self.l3(x)
+        x,_ = self.l4(x)
+        x,_ = self.l5(x)
+        x,_ = self.l6(x)
+        x,_ = self.l7(x)
+        x,_ = self.l8(x)
+        x,_ = self.l9(x)
+        x,f = self.l10(x)
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -601,7 +601,7 @@ class Model_lst_4part_bone(nn.Module):
 
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
-
+        embedding = x
         feature_dict = dict()
 
         for name in self.head:
@@ -609,7 +609,7 @@ class Model_lst_4part_bone(nn.Module):
         
         x = self.drop_out(x)
 
-        return self.fc(x), feature_dict, self.logit_scale, [head_feature, hand_feature, hip_feature, foot_feature]
+        return self.fc(x), feature_dict, self.logit_scale, [head_feature, hand_feature, hip_feature, foot_feature], embedding
 
 
 class Model_lst_4part_ucla(nn.Module):
@@ -838,16 +838,16 @@ class Model_lst_4part_bone_ucla(nn.Module):
         x = rearrange(x, '(n m t) v c -> n (m v c) t', m=M, t=T).contiguous()
         x = self.data_bn(x)
         x = x.view(N, M, V, C, T).permute(0, 1, 3, 4, 2).contiguous().view(N * M, C, T, V)
-        x = self.l1(x)
-        x = self.l2(x)
-        x = self.l3(x)
-        x = self.l4(x)
-        x = self.l5(x)
-        x = self.l6(x)
-        x = self.l7(x)
-        x = self.l8(x)
-        x = self.l9(x)
-        x = self.l10(x)
+        x,_ = self.l1(x)
+        x,_ = self.l2(x)
+        x,_ = self.l3(x)
+        x,_ = self.l4(x)
+        x,_ = self.l5(x)
+        x,_ = self.l6(x)
+        x,_ = self.l7(x)
+        x,_ = self.l8(x)
+        x,_ = self.l9(x)
+        x,f = self.l10(x)
 
         # N*M,C,T,V
         c_new = x.size(1)
@@ -865,7 +865,7 @@ class Model_lst_4part_bone_ucla(nn.Module):
 
         x = x.view(N, M, c_new, -1)
         x = x.mean(3).mean(1)
-
+        embedding = x
         feature_dict = dict()
 
         for name in self.head:
@@ -873,4 +873,4 @@ class Model_lst_4part_bone_ucla(nn.Module):
         
         x = self.drop_out(x)
 
-        return self.fc(x), feature_dict, self.logit_scale, [head_feature, hand_feature, hip_feature, foot_feature]
+        return self.fc(x), feature_dict, self.logit_scale, [head_feature, hand_feature, hip_feature, foot_feature], embedding
