@@ -27,7 +27,7 @@ model_args:
   graph_args:
     labeling_mode: 'spatial'
   head: ['ViT-B/32']
-  k: 6
+  k: 5 #6
 
 
 #optim
