@@ -16,6 +16,7 @@ from sklearn.metrics import confusion_matrix
 import csv
 import numpy as np
 import glob
+from utils.utils import one_shot_evaluation
 
 # torch
 import torch
@@ -592,7 +593,9 @@ class Processor():
             ##_embedding_list=np.array(F.normalize(torch.tensor(_embedding_list), p=2, dim=1))
             #np.savez("embedding_l10_test_split10_nucla.npz", data=_data_list, label=_label_list, embedding=_embedding_list)
             #####################################################################################################
-          
+
+            _label_list =  np.concatenate(_label_list)
+            _embedding_list = np.concatenate(_embedding_list)
             score = np.concatenate(score_frag)
             loss = np.mean(loss_value)
             if 'ucla' in self.arg.feeder:
@@ -616,10 +619,19 @@ class Processor():
                     k, 100 * self.data_loader[ln].dataset.top_k(score, k)))
 
             if save_score:
+                # Save both score_dict and embeddings
+                save_dict = {
+                    'score': score_dict,
+                    'embedding': _embedding_list
+                }
                 with open('{}/test_score.pkl'.format(
                         self.arg.work_dir), 'wb') as f:
-                    pickle.dump(score_dict, f)
+                    pickle.dump(save_dict, f)
 
+            # One-shot evaluation
+            oneshot_results = one_shot_evaluation(config='ucla', unseen_split=5, llm_embeddings=_embedding_list, labels=_label_list)
+            print(f"One-shot Accuracy - Total: {oneshot_results['total']:.4f}, Seen: {oneshot_results['seen']:.4f}, Unseen: {oneshot_results['unseen']:.4f}")
+    
             # acc for each class:
             label_list = np.concatenate(label_list)
             pred_list = np.concatenate(pred_list)
@@ -632,6 +644,8 @@ class Processor():
                 writer.writerow(each_acc)
                 writer.writerows(confusion)
 
+    
+    
     
     def start(self):
         if self.arg.phase == 'train':
