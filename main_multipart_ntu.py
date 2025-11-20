@@ -27,7 +27,6 @@ import yaml
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
-from torchlight import DictAction
 from tools import *
 from Text_Prompt import *
 from KLLoss import KLLoss
@@ -150,12 +149,12 @@ def get_parser():
         help='the number of worker for data loader')
     parser.add_argument(
         '--train-feeder-args',
-        action=DictAction,
+        type=dict,
         default=dict(),
         help='the arguments of data loader for training')
     parser.add_argument(
         '--test-feeder-args',
-        action=DictAction,
+        type=dict,
         default=dict(),
         help='the arguments of data loader for test')
 
@@ -715,4 +714,5 @@ if __name__ == '__main__':
     arg = parser.parse_args()
     init_seed(arg.seed)
     processor = Processor(arg)
+    processor.start()
     processor.start()
