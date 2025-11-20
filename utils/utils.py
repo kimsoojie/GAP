@@ -87,27 +87,26 @@ def one_shot_evaluation(config='ucla', unseen_split=5, llm_embeddings=None, labe
         """
         One-shot learning evaluation: randomly select one reference sample per label
         and predict labels based on cosine similarity.
-        
-        Args:
-            args: arguments containing config and unseen_split
-            llm_embeddings: torch.Tensor or np.ndarray of shape (N, D)
-            labels: torch.Tensor or np.ndarray of shape (N,)
-            num_trials: number of trials to average over
-        
-        Returns:
-            dict: accuracies for 'total', 'seen', 'unseen'
         """
         config =config
         unseen_split = unseen_split
         seen_labels, unseen_labels = get_label_split_oneshot(config, unseen_split)
         
+        # Ensure numpy arrays for indexing
         if isinstance(llm_embeddings, torch.Tensor):
             llm_embeddings = llm_embeddings.float().cpu().numpy()
+        elif not isinstance(llm_embeddings, np.ndarray):
+            llm_embeddings = np.array(llm_embeddings)
         if isinstance(labels, torch.Tensor):
             labels = labels.cpu().numpy()
+        elif not isinstance(labels, np.ndarray):
+            labels = np.array(labels)
         
         def evaluate_subset(subset_labels, embeddings, labels):
             """Helper function to evaluate on a specific subset of labels"""
+            # Ensure numpy arrays for indexing
+            embeddings = np.array(embeddings)
+            labels = np.array(labels)
             # Filter samples belonging to subset_labels
             subset_mask = np.isin(labels, subset_labels)
             subset_embeddings = embeddings[subset_mask]
