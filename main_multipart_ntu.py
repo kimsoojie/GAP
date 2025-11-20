@@ -715,4 +715,3 @@ if __name__ == '__main__':
     init_seed(arg.seed)
     processor = Processor(arg)
     processor.start()
-    processor.start()
