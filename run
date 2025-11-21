@@ -1,0 +1,5 @@
+python main_multipart_ucla.py --config config/ucla/lst_joint.yaml --work-dir work_dir/ucla/lst_joint --phase test --save-score True --weights work_dir/ucla/lst_joint/ --device 0
+
+
+
+CUDA_VISIBLE_DEVICES=0 python main_multipart_ucla.py --config config/ucla/lst_joint.yaml --work-dir work_dir/ucla/lst_joint --device 0
