@@ -157,6 +157,7 @@ def get_parser():
         type=dict,
         default=dict(),
         help='the arguments of data loader for test')
+    parser.add_argument('--model', default=None, help='the model will be used')
     parser.add_argument(
         '--model-args',
         type=dict,
@@ -709,9 +710,6 @@ if __name__ == '__main__':
         parser.set_defaults(**default_arg)
 
     arg = parser.parse_args()
-    init_seed(arg.seed)
-    processor = Processor(arg)
-    processor.start()
     init_seed(arg.seed)
     processor = Processor(arg)
     processor.start()
