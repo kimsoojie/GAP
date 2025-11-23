@@ -625,7 +625,7 @@ class Processor():
                     pickle.dump(save_dict, f)
 
             # One-shot evaluation
-            oneshot_results = one_shot_evaluation(config='ucla', unseen_split=5, llm_embeddings=_embedding_list, labels=_label_list)
+            oneshot_results = one_shot_evaluation(config='ntu', unseen_split=100, llm_embeddings=_embedding_list, labels=_label_list)
             print(f"One-shot Accuracy - Total: {oneshot_results['total']:.4f}, Seen: {oneshot_results['seen']:.4f}, Unseen: {oneshot_results['unseen']:.4f}")
 
             # acc for each class:
