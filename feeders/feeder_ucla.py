@@ -57,13 +57,16 @@ class Feeder(Dataset):
             self.data.append(value)
 
     def load_data_split_zsl(self):
-        unique_labels = np.unique(self.label)
-        num_unseen = 5
-        step = max(1, len(unique_labels) // num_unseen)
-        unseen_labels = set(unique_labels[::step][:num_unseen])
-        seen_labels = set(unique_labels) - unseen_labels
-        print(f"Unseen labels: {sorted(unseen_labels)}") # [0, 2, 4, 6, 8]
-        print(f"Seen labels: {sorted(seen_labels)}") # [1, 3, 5, 7, 9]
+        # unique_labels = np.unique(self.label)
+        # num_unseen = 5
+        # step = max(1, len(unique_labels) // num_unseen)
+        # unseen_labels = set(unique_labels[::step][:num_unseen])
+        # seen_labels = set(unique_labels) - unseen_labels
+        # print(f"Unseen labels: {sorted(unseen_labels)}") # [0, 2, 4, 6, 8]
+        # print(f"Seen labels: {sorted(seen_labels)}") # [1, 3, 5, 7, 9]
+        
+        seen_labels = self.seen_labels
+        unseen_labels = self.unseen_labels
     
         # data: N C V T M
         self.data = []
@@ -83,27 +86,30 @@ class Feeder(Dataset):
                 self.sample_name.append(file_name)
     
     def load_data_split_oneshot(self, split=5):
-        unique_labels = list(range(10))
+        # unique_labels = list(range(10))
 
-        base_unseen_labels = list(range(0, 10, 2))  # [0, 2, 4, 6, 8]
+        # base_unseen_labels = list(range(0, 10, 2))  # [0, 2, 4, 6, 8]
 
-        if split == 5: 
-            num_seen = 5 # [1, 3, 5, 7, 9]
-        elif split == 3: 
-            num_seen = 3 # [1, 5, 9]
-        else:
-            raise ValueError(f"Unsupported split: {split}")
+        # if split == 5: 
+        #     num_seen = 5 # [1, 3, 5, 7, 9]
+        # elif split == 3: 
+        #     num_seen = 3 # [1, 5, 9]
+        # else:
+        #     raise ValueError(f"Unsupported split: {split}")
 
-        remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
-        if len(remaining_labels) >= num_seen:
-            indices = np.linspace(0, len(remaining_labels)-1, num_seen, dtype=int)
-            seen_labels = [remaining_labels[i] for i in indices]
-        else:
-            seen_labels = remaining_labels
-        unseen_labels = set(base_unseen_labels)
+        # remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
+        # if len(remaining_labels) >= num_seen:
+        #     indices = np.linspace(0, len(remaining_labels)-1, num_seen, dtype=int)
+        #     seen_labels = [remaining_labels[i] for i in indices]
+        # else:
+        #     seen_labels = remaining_labels
+        # unseen_labels = set(base_unseen_labels)
 
-        print(f"Unseen labels: {sorted(unseen_labels)}")
-        print(f"Seen labels: {sorted(seen_labels)}")
+        # print(f"Unseen labels: {sorted(unseen_labels)}")
+        # print(f"Seen labels: {sorted(seen_labels)}")
+        
+        seen_labels = self.seen_labels
+        unseen_labels = self.unseen_labels
 
         self.data = []
         self.label = []

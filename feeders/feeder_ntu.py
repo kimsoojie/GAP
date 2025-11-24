@@ -87,18 +87,21 @@ class Feeder(Dataset):
         # split 80/40: unseen [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108, 111, 114, 117]
         # split 60/60: unseen [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118]
 
-        unique_labels = np.unique(self.label)
-        if split == 5: num_unseen=5
-        elif split == 10: num_unseen=10
-        elif split == 24: num_unseen=24
-        elif split == 40: num_unseen=40
-        elif split == 60: num_unseen=60
+        # unique_labels = np.unique(self.label)
+        # if split == 5: num_unseen=5
+        # elif split == 10: num_unseen=10
+        # elif split == 24: num_unseen=24
+        # elif split == 40: num_unseen=40
+        # elif split == 60: num_unseen=60
         
-        step = max(1, len(unique_labels) // num_unseen)
-        unseen_labels = set(unique_labels[::step][:num_unseen]) 
-        seen_labels = set(unique_labels) - unseen_labels
-        print(f"Unseen labels: {sorted(unseen_labels)}")
-        print(f"Seen labels: {sorted(seen_labels)}")
+        # step = max(1, len(unique_labels) // num_unseen)
+        # unseen_labels = set(unique_labels[::step][:num_unseen]) 
+        # seen_labels = set(unique_labels) - unseen_labels
+        # print(f"Unseen labels: {sorted(unseen_labels)}")
+        # print(f"Seen labels: {sorted(seen_labels)}")
+        
+        seen_labels = self.seen_labels
+        unseen_labels = self.unseen_labels
 
         if self.split == 'train': # seen data in train set
             indices = [i for i, label in enumerate(self.label) if label in seen_labels]
@@ -123,24 +126,27 @@ class Feeder(Dataset):
         else:
             raise NotImplementedError('data split only supports train/test')
         
-        unique_labels = list(range(120))
-        base_unseen_labels = list(range(0, 120, 6)) 
+        # unique_labels = list(range(120))
+        # base_unseen_labels = list(range(0, 120, 6)) 
         
-        if split == 20: num_seen=20
-        elif split == 40: num_seen=40
-        elif split == 60: num_seen=60
-        elif split == 80: num_seen=80
-        elif split == 100: num_seen=100
+        # if split == 20: num_seen=20
+        # elif split == 40: num_seen=40
+        # elif split == 60: num_seen=60
+        # elif split == 80: num_seen=80
+        # elif split == 100: num_seen=100
         
-        remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
-        if len(remaining_labels) >= num_seen:
-            indices = np.linspace(0, len(remaining_labels)-1, num_seen, dtype=int)
-            seen_labels = [remaining_labels[i] for i in indices]
-        else:
-            seen_labels = remaining_labels
-        unseen_labels = set(base_unseen_labels)
-        print(f"Unseen labels: {sorted(unseen_labels)}")
-        print(f"Seen labels: {sorted(seen_labels)}")
+        # remaining_labels = [l for l in unique_labels if l not in base_unseen_labels]
+        # if len(remaining_labels) >= num_seen:
+        #     indices = np.linspace(0, len(remaining_labels)-1, num_seen, dtype=int)
+        #     seen_labels = [remaining_labels[i] for i in indices]
+        # else:
+        #     seen_labels = remaining_labels
+        # unseen_labels = set(base_unseen_labels)
+        # print(f"Unseen labels: {sorted(unseen_labels)}")
+        # print(f"Seen labels: {sorted(seen_labels)}")
+        
+        seen_labels = self.seen_labels
+        unseen_labels = self.unseen_labels
 
         if self.split == 'train': # seen data in train set
             indices = [i for i, label in enumerate(self.label) if label in seen_labels]
