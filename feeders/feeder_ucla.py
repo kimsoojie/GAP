@@ -3,7 +3,7 @@ import pickle
 import json
 import random
 import math
-
+from utils.utils import get_label_split_oneshot, get_label_split_zsl
 from torch.utils.data import Dataset
 
 class Feeder(Dataset):
@@ -35,9 +35,13 @@ class Feeder(Dataset):
         self.normalization = normalization
         self.use_mmap = use_mmap
         self.repeat = repeat
+        self.unseen_split = 5
+        #self.seen_labels, self.unseen_labels = get_label_split_zsl('ucla', self.unseen_split)
+        #self.seen_labels, self.unseen_labels = get_label_split_oneshot('ucla', self.unseen_split)
+        
         self.load_data()
         #self.load_data_split_zsl()
-        #self.load_data_split_oneshot(split=5)
+        #self.load_data_split_oneshot(split=self.unseen_split)
         if normalization:
             self.get_mean_map()
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 from torch.utils.data import Dataset
-
+from utils.utils import get_label_split_oneshot, get_label_split_zsl
 from feeders import tools
 
 
@@ -40,9 +40,13 @@ class Feeder(Dataset):
         self.random_rot = random_rot
         self.bone = bone
         self.vel = vel
+        self.unseen_split = 100
+        #self.seen_labels, self.unseen_labels = get_label_split_zsl('ntu', self.unseen_split)
+        #self.seen_labels, self.unseen_labels = get_label_split_oneshot('ntu', self.unseen_split)
+        
         self.load_data()
-        #self.load_data_split_zsl(split=10)
-        #self.load_data_split_oneshot(split=100)
+        #self.load_data_split_zsl()
+        #self.load_data_split_oneshot(split=self.unseen_split)
         if normalization:
             self.get_mean_map()
 
