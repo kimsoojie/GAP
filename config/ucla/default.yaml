@@ -26,7 +26,6 @@ model_args:
   graph: graph.ucla.Graph
   graph_args:
     labeling_mode: 'spatial'
-  k: 1
 
 #optim
 weight_decay: 0.0001
