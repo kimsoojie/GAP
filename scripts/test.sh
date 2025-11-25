@@ -15,4 +15,4 @@ modality='joint' # joint / bone / joint_vel / bone_vel
 # python main_multipart_ntu.py --config config/nturgbd-cross-view/lst_${modality}.yaml --work-dir work_dir/ntu60/cview/${modality} --phase test --save-score True --weights work_dir/ntu60/cview/${modality}/ --device 0
 
 # Test on NUCLA
-python main_multipart_ucla.py --config config/ucla/lst_${modality}.yaml --work-dir work_dir/ucla/lst_${modality} --phase test --save-score True --weights work_dir/ucla/lst_${modality}/ --device 0
+python main_multipart_ucla.py --config config/ucla/lst_${modality}.yaml --work-dir work_dir/ucla/${modality} --phase test --save-score True --weights work_dir/ucla/${modality}/ --device 0
