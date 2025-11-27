@@ -36,12 +36,7 @@ if __name__ == "__main__":
 
     dataset = arg.dataset
     
-    if 'ntu' in arg.dataset:
-     ## ntu
-        arg.alpha = [0.4, 0.6, 0.2, 0.2]
-    elif 'UCLA' in arg.dataset:
-         # ucla
-        arg.alpha = [0.4, 0.4, 0.3, 0.2]    
+    arg.alpha = [0.6, 0.6, 0.4, 0.4]  
     
     if 'UCLA' in arg.dataset:
         label = []
