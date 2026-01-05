@@ -41,8 +41,8 @@ class Feeder(Dataset):
         self.bone = bone
         self.vel = vel
         self.unseen_split = 100
-        #self.seen_labels, self.unseen_labels = get_label_split_zsl('ntu', self.unseen_split)
-        #self.seen_labels, self.unseen_labels = get_label_split_oneshot('ntu', self.unseen_split)
+        #self.seen_labels, self.unseen_labels = get_label_split_zsl(data_path, self.unseen_split)
+        #self.seen_labels, self.unseen_labels = get_label_split_oneshot(data_path, self.unseen_split)
         
         self.load_data()
         #self.load_data_split_zsl()

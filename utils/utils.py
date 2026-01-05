@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 def get_label_split_oneshot(config, num_split):
-    if 'ntu' in config:
+    if 'NTU' in config:
         unique_labels = list(range(120))
         base_unseen_labels = list(range(0, 120, 6)) 
         
@@ -26,7 +26,7 @@ def get_label_split_oneshot(config, num_split):
         print(f"Unseen labels: {sorted(unseen_labels)}")
         print(f"Seen labels: {sorted(seen_labels)}")
         
-    elif 'ucla' in config:
+    elif 'NW-UCLA' in config:
         unique_labels = list(range(10))
         base_unseen_labels = list(range(0, 10, 2))  # [0, 2, 4, 6, 8]
 
@@ -51,7 +51,7 @@ def get_label_split_oneshot(config, num_split):
     return seen_labels, unseen_labels
 
 def get_label_split_zsl(config, num_split):
-    if 'nturgbd120' in config:
+    if 'NTU120' in config:
         all_labels = list(range(120))
         if num_split == 10: 
             unseen_labels =  [4, 13, 37, 43, 49, 65, 88, 95, 99, 106]
@@ -64,7 +64,7 @@ def get_label_split_zsl(config, num_split):
         
         seen_labels = [l for l in all_labels if l not in unseen_labels]
     
-    elif 'nturgbd-cross-subject' in config or 'nturgbd-cross-view' in config:  
+    elif 'NTU60' in config:  
         all_labels = list(range(60))
         if num_split == 5: 
             unseen_labels = [10, 11, 19, 26, 56]
@@ -77,7 +77,7 @@ def get_label_split_zsl(config, num_split):
         
         seen_labels = [l for l in all_labels if l not in unseen_labels]
         
-    elif 'ucla' in config:
+    elif 'NW-UCLA' in config:
         
         if num_split == 3:
             seen_labels = [1,5,9]
@@ -88,7 +88,7 @@ def get_label_split_zsl(config, num_split):
     
     return seen_labels, unseen_labels
 
-def one_shot_evaluation(config='ucla', unseen_split=5, llm_embeddings=None, labels=None, num_trials=500):
+def one_shot_evaluation(config='NW-UCLA', unseen_split=5, llm_embeddings=None, labels=None, num_trials=500):
         """
         One-shot learning evaluation: randomly select one reference sample per label
         and predict labels based on cosine similarity.
