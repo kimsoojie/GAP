@@ -51,35 +51,40 @@ def get_label_split_oneshot(config, num_split):
     return seen_labels, unseen_labels
 
 def get_label_split_zsl(config, num_split):
-    if 'ntu' in config:
-        # seen/unseen split
-        # split 115/5: unseen [0, 24, 48, 72, 96]
-        # split 110/10: unseen [0, 12, 24, 36, 48, 60, 72, 84, 96, 108]
-        # split 96/24: unseen [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115]
-        # split 80/40: unseen [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108, 111, 114, 117]
-        # split 60/60: unseen [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118]
-
-        unique_labels = list(range(120))
-        if num_split == 5: num_unseen=5
-        elif num_split == 10: num_unseen=10
-        elif num_split == 24: num_unseen=24
-        elif num_split == 40: num_unseen=40
-        elif num_split == 60: num_unseen=60
+    if 'nturgbd120' in config:
+        all_labels = list(range(120))
+        if num_split == 10: 
+            unseen_labels =  [4, 13, 37, 43, 49, 65, 88, 95, 99, 106]
+        elif num_split == 24: 
+            unseen_labels =   [5, 9, 11, 16, 18, 20, 22, 29, 35, 39, 45, 49, 59, 68, 70, 81, 84, 87, 93, 94, 104, 113, 114, 119]
+        elif num_split == 40:
+            unseen_labels =  [11, 12, 18, 22, 23, 26, 28, 34, 37, 38, 42, 44, 46, 47, 48, 57, 59, 64, 66, 70, 73, 74, 75, 83, 86, 90, 92, 93, 95, 96, 102, 104, 107, 108, 110, 112, 115, 116, 118, 119]
+        elif num_split == 60:
+            unseen_labels =  [0, 1, 4, 6, 7, 8, 9, 17, 18, 21, 23, 25, 26, 28, 30, 32, 33, 34, 37, 38, 39, 40, 41, 42, 44, 45, 50, 51, 52, 53, 56, 61, 62, 65, 67, 68, 69, 70, 74, 77, 78, 81, 83, 87, 89, 90, 91, 92, 94, 95, 96, 97, 100, 101, 109, 111, 114, 115, 116, 118]
         
-        step = max(1, len(unique_labels) // num_unseen)
-        unseen_labels = unique_labels[::step][:num_unseen]
-        seen_labels = [l for l in unique_labels if l not in unseen_labels]
-        print(f"Unseen labels: {sorted(unseen_labels)}")
-        print(f"Seen labels: {sorted(seen_labels)}")
+        seen_labels = [l for l in all_labels if l not in unseen_labels]
+    
+    elif 'nturgbd-cross-subject' in config or 'nturgbd-cross-view' in config:  
+        all_labels = list(range(60))
+        if num_split == 5: 
+            unseen_labels = [10, 11, 19, 26, 56]
+        elif num_split == 12: 
+            unseen_labels = [3, 5, 9, 12, 15, 40, 42, 47, 51, 56, 58, 59]
+        elif num_split == 20:
+            unseen_labels = [0, 12, 13, 14, 15, 16, 17, 22, 23, 26, 29, 30, 31, 35, 36, 42, 43, 48, 56, 57]
+        elif num_split == 30:
+            unseen_labels =  [0, 1, 2, 6, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 25, 26, 27, 31, 32, 33, 39, 42, 45, 47, 48, 51, 52, 55, 58, 59]
+        
+        seen_labels = [l for l in all_labels if l not in unseen_labels]
         
     elif 'ucla' in config:
-        unique_labels = list(range(10))
-        num_unseen = 5
-        step = max(1, len(unique_labels) // num_unseen)
-        unseen_labels = unique_labels[::step][:num_unseen]
-        seen_labels = [l for l in unique_labels if l not in unseen_labels]
-        print(f"Unseen labels: {sorted(unseen_labels)}") # [0, 2, 4, 6, 8]
-        print(f"Seen labels: {sorted(seen_labels)}") # [1, 3, 5, 7, 9]
+        
+        if num_split == 3:
+            seen_labels = [1,5,9]
+            unseen_labels = [0,2,4,6,8]
+        elif num_split == 5:
+            seen_labels = [1,3,5,7,9]
+            unseen_labels = [0,2,4,6,8]
     
     return seen_labels, unseen_labels
 
