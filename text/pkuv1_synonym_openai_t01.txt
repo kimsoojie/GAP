@@ -1,0 +1,51 @@
+bow,bend forward, give a bow, make a bow, stoop, incline, nod forward, bend at the waist, pay respect, salute politely, bend down
+brushing hair,comb hair, groom hair, smooth hair, tidy hair, run fingers through hair, fix hair, style hair, brush through hair, neaten hair, arrange hair
+brushing teeth,clean teeth, brush the teeth, scrub teeth, polish teeth, brush orally, clean the mouth, toothbrushing, dental brushing, brush inside the mouth, freshen teeth
+check time (from watch),look at watch, check the watch, glance at watch, read the time, see the time, check wristwatch, look at the timepiece, consult the watch, glance at the wrist, tell the time from a watch
+cheer up,encourage, root on, support, uplift, boost morale, rally, pump up, motivate, hearten, inspire
+clapping,applaud, clap hands, give applause, handclap, pat hands together, cheer with claps, round of applause, beat hands together, applaud enthusiastically, make clapping gestures
+cross hands in front (say stop),signal stop, block with arms, cross arms forward, make a stop gesture, hold arms out, ward off, halt gesture, defensive cross-arm gesture, refuse passage, bar the way
+drink water,sip water, take a drink, drink from a cup, gulp water, swallow water, have water, hydrate, take a sip, drink a beverage, raise a cup to drink
+drop,let fall, release, let go, put down, lower and release, set down, drop off, relinquish, loosen grip, allow to fall
+eat meal/snack,have a meal, eat food, have a snack, munch, nibble, dine, snack, take a bite, feed oneself, consume food
+falling,collapse, tumble, fall down, lose balance, topple, drop to the ground, stumble and fall, take a fall, go down, crumple
+giving something to other person,hand over, give away, pass to someone, offer, present, deliver by hand, transfer to another person, pass along, give to another, extend an item to someone
+hand waving,wave, wave hand, greet by waving, flutter hand, gesture hello, signal by hand, wave around, waggle hand, wave to someone, beckon lightly
+handshaking,shake hands, give a handshake, clasp hands, greet with a handshake, hand clasp, exchange a handshake, grasp hands, formal greeting gesture, shake another person's hand, hand greeting
+hopping (one foot jumping),hop, bounce on one foot, one-leg hop, single-leg jump, spring on one foot, skip on one foot, pogo on one foot, hop along, one-footed bouncing, one-foot leap
+hugging other person,embrace, cuddle, hold close, wrap arms around, give a hug, squeeze affectionately, clasp in arms, snuggle, hold someone tightly, affectionate embrace
+jump up,leap up, spring up, hop upward, bound upward, rise with a jump, pop up, vault upward, bounce up, jump vertically, launch upward
+kicking other person,strike with the foot, kick at someone, boot, lash out with the leg, deliver a kick, foot strike, snap kick, thrust kick, attack with the foot, leg strike
+kicking something,kick, punt, boot, strike with the foot, tap with the foot, knock with the foot, foot strike, swing the leg to hit, kick an object, toe-kick
+make a phone call/answer phone,call, answer the phone, pick up the phone, talk on the phone, receive a call, place a call, use the phone, phone someone, respond to a call, hold a phone to the ear
+pat on back of other person,pat someone on the back, tap the back, give a reassuring pat, back pat, lightly slap the back, comfort with a pat, congratulate with a pat, touch the back gently, supportive back tap, pat another person's back
+pickup,pick up, lift, lift up, grab, grasp, take up, retrieve, collect, raise from the ground, scoop up
+playing with phone/tablet,use a phone, use a tablet, tap on a device, swipe on a phone, operate a handheld device, browse on a phone, interact with a tablet, look at a device, text on a phone, handle a smart device
+point finger at the other person,point at someone, direct a finger at someone, accuse by pointing, indicate a person, single out with a finger, gesture at someone, aim a finger at another, point toward a person, finger-point at someone, target someone with a finger
+pointing to something with finger,point, indicate, gesture toward, direct attention to, single out, show with a finger, mark out, point toward an object, finger-indicate, signal a direction
+punching/slapping other person,hit, strike, punch, slap, smack, swat, attack with the hand, land a blow, hand strike, lash out, deliver a hit
+pushing other person,shove, push, thrust, nudge forcefully, propel, force back, press against, drive backward, jostle, move someone by force
+put on a hat/cap,wear a hat, place a hat on, don a cap, cap up, put a cap on, cover the head with a hat, dress in a hat, top with a cap, set a hat on the head, slip on a cap
+put something inside pocket,pocket, tuck into pocket, slip into pocket, stash in pocket, put away in pocket, store in a pocket, insert into pocket, place in pocket, hide in pocket, keep in pocket
+reading,read, look through, scan text, go over text, study, review writing, peruse, read over, examine a document, look at written material
+rub two hands together,wring hands, rub hands, brush palms together, warm hands, scrub hands together, palm rubbing, slide hands together, move palms back and forth, hand rubbing, friction with hands
+salute,give a salute, salute formally, raise a hand in salute, military salute, pay respects, render a salute, gesture respect, formal hand salute, honor with a salute, acknowledge formally
+sitting down,take a seat, sit, sit down, lower into a chair, have a seat, settle down, plop down, seat oneself, get seated, move into sitting posture
+standing up,get up, rise, rise up, stand, stand up, come to one's feet, get to standing, straighten up, move upright, lift oneself to standing
+take off a hat/cap,remove a hat, take off a cap, doff a hat, lift off the hat, uncover the head, remove headwear, pull off a cap, take the cap away, uncap, strip off the hat
+take off glasses,remove glasses, take off spectacles, doff glasses, pull off glasses, slip glasses off, remove eyewear, take away spectacles, unwear glasses, lift glasses from the face, detach eyewear
+take off jacket,remove jacket, take off coat, doff a jacket, slip out of jacket, pull off outerwear, shrug off jacket, remove outer layer, peel off a jacket, undress the jacket, strip off the coat
+take out something from pocket,pull from pocket, take out of pocket, retrieve from pocket, remove from pocket, fish out of pocket, draw from pocket, pull out an item, extract from pocket, get from pocket, bring out from pocket
+taking a selfie,shoot a selfie, snap a selfie, take a self-photo, photograph oneself, self-portrait with phone, capture oneself, selfie shot, phone self-photo, pose for a selfie, take one's own picture
+tear up paper,rip paper, tear paper, shred paper, rip up a sheet, split paper apart, pull paper apart, destroy paper by tearing, tear into pieces, rip into bits, paper tearing
+throw,toss, hurl, fling, chuck, lob, pitch, cast, heave, sling, launch
+touch back (backache),hold the back, clutch the back, touch the lower back, reach to the back, press the back, rub the back, support the back in pain, grasp the back area, feel the back, attend to back pain
+touch chest (stomachache/heart pain),hold the chest, clutch the chest, press the chest, touch the stomach area, hold the upper abdomen, grasp the chest in pain, feel the chest, press the torso, attend to chest pain, clutch the belly
+touch head (headache),hold the head, clutch the head, touch the forehead, press the temple, rub the head, grasp the head in pain, feel the head, put a hand on the head, hold the forehead, attend to a headache
+touch neck (neckache),hold the neck, clutch the neck, rub the neck, touch the throat area, reach to the neck, support the neck, feel neck pain, press the neck, grasp the neck, attend to neck discomfort
+typing on a keyboard,type, keyboard typing, key in, enter text, tap keys, use the keyboard, input on a keyboard, type on keys, keyboard entry, press keyboard buttons
+use a fan (with hand or paper)/feeling warm,fan oneself, cool off, wave a fan, create airflow, ventilate oneself, waft air, beat the air, cool the face, fan the body, ease the heat
+wear jacket,put on a jacket, don a jacket, slip into a jacket, dress in a jacket, wear a coat, pull on a jacket, throw on a jacket, get into outerwear, jacket up, put on outerwear
+wear on glasses,put on glasses, wear glasses, don glasses, slip on spectacles, put on eyewear, set glasses on the face, wear spectacles, fit glasses, place glasses on, get into glasses
+wipe face,clean the face, rub the face, dab the face, blot the face, swipe across the face, dry the face, wipe sweat off, pat the face, brush the face, wipe off the face
+writing,write, jot down, take notes, pen, scribble, mark down, compose by hand, note down, write on paper, make written strokes
