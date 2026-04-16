@@ -11,6 +11,15 @@ with open('text/ntu120_label_map.txt') as infile:
 
 
 
+paste_text_map0_pku = []
+
+with open('text/pkuv1_synonym_openai_t01.txt') as infile:
+    lines = infile.readlines()
+    for ind, line in enumerate(lines):
+        temp_list = line.rstrip().lstrip().split(',')
+        paste_text_map0_pku.append(temp_list)
+
+
 paste_text_map0 = []
 
 with open('text/synonym_openai_t01.txt') as infile:
@@ -30,6 +39,13 @@ with open('text/sentence_openai_t01.txt') as infile:
             temp_list.append(" ")
         paste_text_map1.append(temp_list)
 
+paste_text_pku = []
+
+with open('text/pkuv1_action_descriptions.txt') as infile:
+    lines = infile.readlines()
+    for ind, line in enumerate(lines):
+        temp_list = line.rstrip().lstrip().split(';')
+        paste_text_pku.append(temp_list)
 
 paste_text_map2 = []
 
@@ -46,8 +62,7 @@ with open('text/ucla_synonym_openai_t01.txt') as infile:
     for ind, line in enumerate(lines):
         temp_list = line.rstrip().lstrip().split(',')
         ucla_paste_text_map0.append(temp_list)
-
-
+        
 ucla_paste_text_map1 = []
 
 with open('text/ucla_pasta_openai_t01.txt') as infile:
@@ -77,6 +92,17 @@ def text_prompt():
     return classes, num_text_aug,text_dict
 
 
+def text_prompt_openai_random_pku():
+    print("Use text prompt openai synonym random")
+
+    total_list = []
+    for pasta_list in paste_text_map0_pku:
+        temp_list = []
+        for item in pasta_list:
+            temp_list.append(clip.tokenize(item))
+        total_list.append(temp_list)
+    return total_list
+
 def text_prompt_openai_random():
     print("Use text prompt openai synonym random")
 
@@ -99,7 +125,27 @@ def text_prompt_openai_random_bert():
         total_list.append(temp_list)
     return total_list
 
+def text_prompt_openai_pasta_pool_4part_pku():
+    print("Use text prompt openai pasta pool")
+    text_dict = {}
+    num_text_aug = 5
 
+    for ii in range(num_text_aug):
+        if ii == 0:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[ii])) for pasta_list in paste_text_pku])
+        elif ii == 1:
+            text_dict[ii] = torch.cat([clip.tokenize((','.join(pasta_list[0:2]))) for pasta_list in paste_text_pku])
+        elif ii == 2:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0] +','.join(pasta_list[2:4]))) for pasta_list in paste_text_pku])
+        elif ii == 3:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0] +','+ pasta_list[4])) for pasta_list in paste_text_pku])
+        else:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0]+','+','.join(pasta_list[5:]))) for pasta_list in paste_text_pku])
+
+
+    classes = torch.cat([v for k, v in text_dict.items()])
+    
+    return classes, num_text_aug, text_dict
 
 def text_prompt_openai_pasta_pool_4part():
     print("Use text prompt openai pasta pool")
