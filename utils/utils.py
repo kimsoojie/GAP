@@ -76,6 +76,17 @@ def get_label_split_zsl(config, num_split):
             unseen_labels =  [0, 1, 2, 6, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 25, 26, 27, 31, 32, 33, 39, 42, 45, 47, 48, 51, 52, 55, 58, 59]
         
         seen_labels = [l for l in all_labels if l not in unseen_labels]
+    
+    elif 'pkuv1' in config:  
+        all_labels = list(range(51))
+        if num_split == 5: 
+            unseen_labels =  [1, 9, 20, 34, 50]
+        elif num_split == 12: 
+            unseen_labels =  [3, 7, 11, 15, 19, 21, 25, 31, 33, 36, 43, 48]
+        else:
+            seen_labels = list(range(51))
+            unseen_labels = []
+        seen_labels = [l for l in all_labels if l not in unseen_labels]
         
     elif 'NW-UCLA' in config:
         
