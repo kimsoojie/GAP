@@ -37,6 +37,7 @@ Please follow [CTR-GCN](https://github.com/Uason-Chen/CTR-GCN) for data preparat
 - NTU RGB+D 60 Skeleton
 - NTU RGB+D 120 Skeleton
 - NW-UCLA
+- PKU-MMD
 
 #### NTU RGB+D 60 and 120
 
@@ -50,6 +51,14 @@ Please follow [CTR-GCN](https://github.com/Uason-Chen/CTR-GCN) for data preparat
 
 1. Download dataset from [here](https://www.dropbox.com/s/10pcm4pksjy6mkq/all_sqe.zip?dl=0)
 2. Move `all_sqe` to `./data/NW-UCLA`
+
+#### PKU MMD
+
+1. Request and download the dataset [here](https://www.icst.pku.edu.cn/struct/Projects/PKUMMD.html)
+2. Unzip all skeleton files from `Skeleton.7z` to `./data/pkummd_raw/part1`
+3. Unzip all label files from `Label_PKUMMD.7z` to `./data/pkummd_raw/part1`
+3. Unzip all skeleton files from `Skeleton_v2.7z` to `./data/pkummd_raw/part2`
+4. Unzip all label files from `Label_PKUMMD_v2.7z` to `./data/pkummd_raw/part2`
 
 ### Data Processing
 
@@ -85,7 +94,18 @@ Put downloaded data into the following directory structure:
  python seq_transformation.py
 ```
 
-
+- Generate PKU MMD I or PKU MMD II dataset:
+```
+ cd ./data/pkummd/part1 # or cd ./data/pkummd/part2
+ mkdir skeleton_pku_v1 or mkdir skeleton_pku_v2
+ # Get skeleton of each performer
+ python pku_part1_skeleton.py or python pku_part2_skeleton.py
+ # Transform the skeleton to the center of the first frame
+ python pku_part1_gendata.py or python pku_part2_gendata.py
+ # Downsample the frame to 64
+ python preprocess_pku.py
+ # Concatenate train data and val data into one file
+ python pku_concat.py
 
 # Training & Testing
 
