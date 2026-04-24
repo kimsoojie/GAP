@@ -14,6 +14,12 @@ modality='joint' # joint / bone / joint_vel / bone_vel
 # Test on PKU-MMD-V2 Cross-Subject
 python main_multipart_pku.py --config config/pkuv2-cross-subject/lst_${modality}.yaml --work-dir work_dir/pkuv2/csub/${modality} --phase test --save-score True --weights work_dir/pkuv2/csub/${modality}/ --device 0 1 2 3
 
+# Test on PKU-MMD-V1 Cross-View
+#python main_multipart_pku.py --config config/pkuv1-cross-view/lst_${modality}.yaml --work-dir work_dir/pkuv1/cview/${modality} --phase test --save-score True --weights work_dir/pkuv1/cview/${modality}/ --device 0 1 2 3
+
+# Test on PKU-MMD-V2 Cross-View
+# python main_multipart_pku.py --config config/pkuv2-cross-view/lst_${modality}.yaml --work-dir work_dir/pkuv2/cview/${modality} --phase test --save-score True --weights work_dir/pkuv2/cview/${modality}/ --device 0 1 2 3
+
 # Test on NTU-60 Cross-Subject
 # python main_multipart_ntu.py --config config/nturgbd-cross-subject/lst_${modality}.yaml --work-dir work_dir/ntu60/csub/${modality} --phase test --save-score True --weights work_dir/ntu60/csub/${modality}/ --device 0 1 2 3
 
