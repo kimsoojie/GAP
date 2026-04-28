@@ -121,10 +121,25 @@ class Feeder(Dataset):
         return self
 
     def __getitem__(self, index):
-        data = self.data[index]
+        data_numpy = self.data[index]
         label = self.label[index]
+        data_numpy = np.array(data_numpy)
+        valid_frame_num = np.sum(data_numpy.sum(0).sum(-1).sum(-1) != 0)
+        # reshape Tx(MVC) to CTVM
+        data_numpy = tools.valid_crop_resize(data_numpy, valid_frame_num, self.p_interval, self.window_size)
+        if self.random_rot:
+            data_numpy = tools.random_rot(data_numpy)
+        if self.bone:
+            from .bone_pairs import ntu_pairs
+            bone_data_numpy = np.zeros_like(data_numpy)
+            for v1, v2 in ntu_pairs:
+                bone_data_numpy[:, :, v1 - 1] = data_numpy[:, :, v1 - 1] - data_numpy[:, :, v2 - 1]
+            data_numpy = bone_data_numpy
+        if self.vel:
+            data_numpy[:, :-1] = data_numpy[:, 1:] - data_numpy[:, :-1]
+            data_numpy[:, -1] = 0
 
-        return data, label, index
+        return data_numpy, label, index
 
     def top_k(self, score, top_k):
         rank = score.argsort()

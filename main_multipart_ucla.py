@@ -4,6 +4,7 @@ from __future__ import print_function
 import argparse
 import inspect
 import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
 import pickle
 import random
 import shutil
@@ -299,14 +300,14 @@ class Processor():
                 dataset=Feeder(**self.arg.train_feeder_args),
                 batch_size=self.arg.batch_size,
                 shuffle=True,
-                num_workers=self.arg.num_worker,
+                num_workers=0,
                 drop_last=True,
                 worker_init_fn=init_seed)
         self.data_loader['test'] = torch.utils.data.DataLoader(
             dataset=Feeder(**self.arg.test_feeder_args),
             batch_size=self.arg.test_batch_size,
             shuffle=False,
-            num_workers=self.arg.num_worker,
+            num_workers=0,
             drop_last=False,
             worker_init_fn=init_seed)
 
