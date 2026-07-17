@@ -59,7 +59,7 @@ def init_seed(seed):
     torch.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
-    # torch.backends.cudnn.enabled = False
+    torch.backends.cudnn.enabled = False  # 충돌나면 주석
     torch.backends.cudnn.deterministic = False
     torch.backends.cudnn.benchmark = True
 
