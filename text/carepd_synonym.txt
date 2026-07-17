@@ -1,0 +1,4 @@
+normal gait,healthy walking,regular walking,stable gait,normal walking pattern,unimpaired gait,steady forward walking,natural walking,balanced walking,no apparent gait impairment
+mild gait impairment,mild walking impairment,slightly impaired gait,mildly abnormal walking,minor gait difficulty,slightly reduced stride,mild shuffling tendency,mildly reduced arm swing,independent walking with mild impairment,subtle gait abnormality
+moderate gait impairment,clear gait impairment,moderately impaired walking,noticeably abnormal gait,short shuffling gait,reduced foot clearance,slow unstable walking,clear reduced arm swing,asymmetric impaired gait,independent walking with marked impairment
+severe gait impairment,severely impaired walking,severe abnormal gait,very short shuffling gait,unstable gait with poor control,looping or turning gait,poor forward progression,severely reduced foot clearance,minimal arm swing,severe parkinsonian gait impairment

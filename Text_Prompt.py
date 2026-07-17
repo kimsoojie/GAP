@@ -65,7 +65,7 @@ with open('text/ucla_synonym_openai_t01.txt') as infile:
         
 carepd_paste_text_map0 = []
 
-with open('text/carepd.txt') as infile:
+with open('text/carepd_synonym.txt') as infile:
     lines = infile.readlines()
     for ind, line in enumerate(lines):
         temp_list = line.rstrip().lstrip().split(',')
