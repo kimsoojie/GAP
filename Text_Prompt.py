@@ -63,6 +63,14 @@ with open('text/ucla_synonym_openai_t01.txt') as infile:
         temp_list = line.rstrip().lstrip().split(',')
         ucla_paste_text_map0.append(temp_list)
         
+carepd_paste_text_map0 = []
+
+with open('text/carepd.txt') as infile:
+    lines = infile.readlines()
+    for ind, line in enumerate(lines):
+        temp_list = line.rstrip().lstrip().split(',')
+        carepd_paste_text_map0.append(temp_list)
+
 ucla_paste_text_map1 = []
 
 with open('text/ucla_pasta_openai_t01.txt') as infile:
@@ -71,7 +79,13 @@ with open('text/ucla_pasta_openai_t01.txt') as infile:
         temp_list = line.rstrip().lstrip().split(';')
         ucla_paste_text_map1.append(temp_list)
 
+carepd_paste_text_map1 = []
 
+with open('text/carepd.txt') as infile:
+    lines = infile.readlines()
+    for ind, line in enumerate(lines):
+        temp_list = line.rstrip().lstrip().split(';')
+        carepd_paste_text_map1.append(temp_list)
 
 
 def text_prompt():
@@ -207,6 +221,17 @@ def text_prompt_openai_random_ucla():
         total_list.append(temp_list)
     return total_list
 
+def text_prompt_carepd():
+    print("Use text prompt carepd")
+
+    total_list = []
+    for pasta_list in carepd_paste_text_map0:
+        temp_list = []
+        for item in pasta_list:
+            temp_list.append(clip.tokenize(item))
+        total_list.append(temp_list)
+    return total_list
+
 
 def text_prompt_openai_pasta_pool_4part_ucla():
     print("Use text prompt openai pasta pool ucla")
@@ -225,6 +250,22 @@ def text_prompt_openai_pasta_pool_4part_ucla():
         else:
             text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0]+','+','.join(pasta_list[5:]))) for pasta_list in ucla_paste_text_map1])
 
+def text_prompt_4part_carepd():
+    print("Use text prompt carepd")
+    text_dict = {}
+    num_text_aug = 5
+
+    for ii in range(num_text_aug):
+        if ii == 0:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[ii])) for pasta_list in carepd_paste_text_map1])
+        elif ii == 1:
+            text_dict[ii] = torch.cat([clip.tokenize((','.join(pasta_list[0:2]))) for pasta_list in carepd_paste_text_map1])
+        elif ii == 2:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0] +','.join(pasta_list[2:4]))) for pasta_list in carepd_paste_text_map1])
+        elif ii == 3:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0] +','+ pasta_list[4])) for pasta_list in carepd_paste_text_map1])
+        else:
+            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0]+','+','.join(pasta_list[5:]))) for pasta_list in carepd_paste_text_map1])
 
 
     classes = torch.cat([v for k, v in text_dict.items()])
