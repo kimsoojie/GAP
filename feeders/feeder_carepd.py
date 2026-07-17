@@ -8,7 +8,7 @@ from feeders import tools
 class Feeder(Dataset):
     def __init__(self, data_path, label_path=None, p_interval=1, split='train', random_choose=False, random_shift=False,
                  random_move=False, random_rot=False, window_size=-1, normalization=False, debug=False, use_mmap=False,
-                 bone=False, vel=False):
+                 bone=False, vel=False, true_only=False):
         """
         :param data_path:
         :param label_path:
@@ -23,6 +23,7 @@ class Feeder(Dataset):
         :param use_mmap: If true, use mmap mode to load data, which can save the running memory
         :param bone: use bone modality or not
         :param vel: use motion modality or not
+        :param true_only: If true, load only samples whose labels are provided true labels.
         :param only_label: only load label for ensemble score compute
         """
 
@@ -40,6 +41,7 @@ class Feeder(Dataset):
         self.random_rot = random_rot
         self.bone = bone
         self.vel = vel
+        self.true_only = true_only
         self.unseen_split = 100
         #self.seen_labels, self.unseen_labels = get_label_split_zsl(data_path, self.unseen_split)
         #self.seen_labels, self.unseen_labels = get_label_split_oneshot(data_path, self.unseen_split)
@@ -73,6 +75,14 @@ class Feeder(Dataset):
                 indices = npz_data[index_key].astype(np.int64)
             else:
                 indices = np.arange(len(all_data))
+            if self.true_only:
+                if 'true_mask' in npz_data:
+                    true_mask = npz_data['true_mask'].astype(bool)
+                elif 'label_sources' in npz_data:
+                    true_mask = np.asarray(npz_data['label_sources']).astype(str) == 'true'
+                else:
+                    raise KeyError('true_only=True requires true_mask or label_sources in CARE-PD npz')
+                indices = indices[true_mask[indices]]
             self.data = self._format_skeleton_array(all_data[indices])
             self.label = all_labels[indices]
             sample_ids = npz_data['sample_ids'][indices] if 'sample_ids' in npz_data else indices
