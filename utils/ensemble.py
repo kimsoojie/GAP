@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--bone-motion-dir', default=None)
     parser.add_argument('--true-only',
                         action='store_true',
-                        default=True,
+                        default=False,
                         help='For CARE-PD, load only rows whose labels are original true labels.')
 
     arg = parser.parse_args()

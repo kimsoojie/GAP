@@ -245,11 +245,11 @@ class Feeder(Dataset):
         data_numpy = self.data[index]
         label = self.label[index]
         data_numpy = np.array(data_numpy)
-        valid_frame_num = np.sum(data_numpy.sum(0).sum(-1).sum(-1) != 0)
-        # reshape Tx(MVC) to CTVM
-        data_numpy = tools.valid_crop_resize(data_numpy, valid_frame_num, self.p_interval, self.window_size)
-        if self.random_rot:
-            data_numpy = tools.random_rot(data_numpy)
+        # valid_frame_num = np.sum(data_numpy.sum(0).sum(-1).sum(-1) != 0)
+        # # reshape Tx(MVC) to CTVM
+        # data_numpy = tools.valid_crop_resize(data_numpy, valid_frame_num, self.p_interval, self.window_size)
+        # if self.random_rot:
+        #     data_numpy = tools.random_rot(data_numpy)
         if self.bone:
             from .bone_pairs import care_pd_pairs
             bone_data_numpy = np.zeros_like(data_numpy)
