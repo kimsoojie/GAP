@@ -11,14 +11,14 @@ if __name__ == "__main__":
     
     parser.add_argument('--config',
                         required=True,
-                        choices={'ucla', 'ntu'})
+                        choices={'ucla', 'ntu', 'care-pd'})
     parser.add_argument('--num-split',
                         required=True,
                         default=5,
                         type=int)
     parser.add_argument('--dataset',
                         required=True,
-                        choices={'ntu/xsub', 'ntu/xview', 'ntu120/xsub', 'ntu120/xset', 'NW-UCLA'},
+                        choices={'ntu/xsub', 'ntu/xview', 'ntu120/xsub', 'ntu120/xset', 'NW-UCLA', 'CARE-PD'},
                         help='the work folder for storing results')
     parser.add_argument('--alpha',
                         default=1,
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     dataset = arg.dataset
     
-    arg.alpha = [0.6, 0.6, 0.4, 0.4]  
+    arg.alpha = [1.0, 1.0, 1.0, 1.0]  
     
     if 'UCLA' in arg.dataset:
         label = []
@@ -59,6 +59,9 @@ if __name__ == "__main__":
         elif 'xview' in arg.dataset:
             npz_data = np.load('../data/' + 'ntu60/' + 'NTU60_CV.npz')
             label = np.where(npz_data['y_test'] > 0)[1]
+    elif 'CARE-PD' in arg.dataset:
+        npz_data = np.load('../data/' + 'CARE-PD-Skeleton/' + 'all_skeleton_label_pseudo_motion_relabel_64f.npz')
+        label = npz_data['labels'].astype(np.int64)
     else:
         raise NotImplementedError
 
@@ -146,49 +149,3 @@ if __name__ == "__main__":
 
     print('Top1 Acc: {:.4f}%'.format(acc * 100))
     print('Top5 Acc: {:.4f}%'.format(acc5 * 100))
-
-    # One-shot evaluation ensemble
-    print('\n=== One-Shot Evaluation ===')
-    
-    # Prepare embeddings for ensemble
-    if arg.joint_motion_dir is not None and arg.bone_motion_dir is not None:
-        ensemble_embeddings = []
-        for i in range(len(label)):
-            _, emb1 = r1_emb[i]
-            _, emb2 = r2_emb[i]
-            _, emb3 = r3_emb[i]
-            _, emb4 = r4_emb[i]
-            # Weighted ensemble of embeddings
-            emb_ensemble = emb1 * arg.alpha[0] + emb2 * arg.alpha[1] + emb3 * arg.alpha[2] + emb4 * arg.alpha[3]
-            ensemble_embeddings.append(emb_ensemble)
-        ensemble_embeddings = np.array(ensemble_embeddings)
-    elif arg.joint_motion_dir is not None and arg.bone_motion_dir is None:
-        ensemble_embeddings = []
-        for i in range(len(label)):
-            _, emb1 = r1_emb[i]
-            _, emb2 = r2_emb[i]
-            _, emb3 = r3_emb[i]
-            emb_ensemble = emb1 * arg.alpha[0] + emb2 * arg.alpha[1] + emb3 * arg.alpha[2]
-            ensemble_embeddings.append(emb_ensemble)
-        ensemble_embeddings = np.array(ensemble_embeddings)
-    elif arg.joint_motion_dir is None and arg.bone_motion_dir is not None:
-        ensemble_embeddings = []
-        for i in range(len(label)):
-            _, emb1 = r1_emb[i]
-            _, emb2 = r2_emb[i]
-            _, emb4 = r4_emb[i]
-            emb_ensemble = emb1 * arg.alpha[0] + emb2 * arg.alpha[1] + emb4 * arg.alpha[2]
-            ensemble_embeddings.append(emb_ensemble)
-        ensemble_embeddings = np.array(ensemble_embeddings)
-    else:
-        ensemble_embeddings = []
-        for i in range(len(label)):
-            _, emb1 = r1_emb[i]
-            _, emb2 = r2_emb[i]
-            emb_ensemble = emb1 * arg.alpha[0] + emb2 * arg.alpha[1]
-            ensemble_embeddings.append(emb_ensemble)
-        ensemble_embeddings = np.array(ensemble_embeddings)
-
-    oneshot_results = one_shot_evaluation(config=arg.config, unseen_split=arg.num_split, llm_embeddings=ensemble_embeddings, labels=label)
-    print(f"One-shot Accuracy - Total: {oneshot_results['total']:.4f}, Seen: {oneshot_results['seen']:.4f}, Unseen: {oneshot_results['unseen']:.4f}")
-

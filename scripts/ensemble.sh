@@ -49,3 +49,13 @@ python utils/ensemble.py \
 # --bone-dir work_dir/ntu60/cview/bone \
 # --joint-motion-dir work_dir/ntu60/cview/joint_vel  \
 # --bone-motion-dir work_dir/ntu60/cview/bone_vel
+
+# Ensemble inference on CARE-PD dataset
+python utils/ensemble.py \
+--config care-pd \
+--num-split 0 \
+--dataset CARE-PD \
+--joint-dir work_dir/carepd/joint \
+--bone-dir work_dir/carepd/bone \
+# --joint-motion-dir work_dir/carepd/joint_vel  \
+# --bone-motion-dir work_dir/carepd/bone_vel

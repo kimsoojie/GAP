@@ -9,7 +9,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset',
                         required=True,
-                        choices={'ntu/xsub', 'ntu/xview', 'ntu120/xsub', 'ntu120/xset', 'NW-UCLA'},
+                        choices={'ntu/xsub', 'ntu/xview', 'ntu120/xsub', 'ntu120/xset', 'NW-UCLA', 'CARE-PD'},
                         help='the work folder for storing results')
     parser.add_argument('--alpha',
                         default=1,
@@ -47,6 +47,9 @@ if __name__ == "__main__":
         elif 'xview' in arg.dataset:
             npz_data = np.load('./data/' + 'ntu/' + 'NTU60_CV.npz')
             label = np.where(npz_data['y_test'] > 0)[1]
+    elif 'CARE-PD' in arg.dataset:
+        npz_data = np.load('./data/' + 'CARE-PD/' + 'all_skeleton_label_pseudo_motion_relabel_64f.npz')
+        label = np.where(npz_data['labels'] > 0)[1]
     else:
         raise NotImplementedError
 
