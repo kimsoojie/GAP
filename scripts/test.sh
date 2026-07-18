@@ -27,7 +27,8 @@ modality='joint' # joint / bone / joint_vel / bone_vel
 # python main_multipart_ntu.py --config config/nturgbd-cross-view/lst_${modality}.yaml --work-dir work_dir/ntu60/cview/${modality} --phase test --save-score True --weights work_dir/ntu60/cview/${modality}/ --device 0 1 2 3
 
 # Test on CARE-PD
-# python main_multipart_carepd.py --config config/care-pd/lst_${modality}.yaml --work-dir work_dir/carepd/${modality} --phase test --save-score True --weights work_dir/carepd/${modality}/ --device 0 1 2 3
+# use_data='True' # True / All
+# python main_multipart_carepd.py --config config/care-pd/lst_${modality}.yaml --work-dir work_dir/carepd/${use_data}/${modality} --phase test --save-score True --weights work_dir/carepd/${use_data}/${modality}/runs.pt --device 0 1 2 3
 
 # Test on NUCLA
-# python main_multipart_ucla.py --config config/ucla/lst_${modality}.yaml --work-dir work_dir/ucla/${modality} --phase test --save-score True --weights work_dir/ucla/${modality}/ --device 0 1 2 3
+python main_multipart_ucla.py --config config/ucla/lst_${modality}.yaml --work-dir work_dir/ucla/${modality} --phase test --save-score True --weights work_dir/ucla/${modality}/ --device 0 1 2 3
