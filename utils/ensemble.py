@@ -31,6 +31,10 @@ if __name__ == "__main__":
                         help='Directory containing "test_score.pkl" for bone eval results')
     parser.add_argument('--joint-motion-dir', default=None)
     parser.add_argument('--bone-motion-dir', default=None)
+    parser.add_argument('--true-only',
+                        action='store_true',
+                        default=True,
+                        help='For CARE-PD, load only rows whose labels are original true labels.')
 
     arg = parser.parse_args()
 
@@ -62,6 +66,12 @@ if __name__ == "__main__":
     elif 'CARE-PD' in arg.dataset:
         npz_data = np.load('../data/' + 'CARE-PD-Skeleton/' + 'all_skeleton_label_pseudo_motion_relabel_64f.npz')
         label = npz_data['labels'].astype(np.int64)
+        if arg.true_only:
+            if 'true_mask' in npz_data:
+                true_mask = npz_data['true_mask'].astype(bool)
+            indices = np.arange(len(label))
+            indices = indices[true_mask[indices]]
+            label = label[indices]
     else:
         raise NotImplementedError
 
