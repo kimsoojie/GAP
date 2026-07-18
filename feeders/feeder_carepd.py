@@ -70,11 +70,9 @@ class Feeder(Dataset):
         elif 'skeletons' in npz_data and 'labels' in npz_data:
             all_data = npz_data['skeletons']
             all_labels = npz_data['labels'].astype(np.int64)
-            index_key = self.split + '_indices'
-            if index_key in npz_data:
-                indices = npz_data[index_key].astype(np.int64)
-            else:
-                indices = np.arange(len(all_data))
+
+            indices = np.arange(len(all_data))
+
             if self.true_only:
                 if 'true_mask' in npz_data:
                     true_mask = npz_data['true_mask'].astype(bool)
@@ -83,14 +81,42 @@ class Feeder(Dataset):
                 else:
                     raise KeyError('true_only=True requires true_mask or label_sources in CARE-PD npz')
                 indices = indices[true_mask[indices]]
+
+            # Deterministic stratified 9:1 train/test split.
+            split_seed = 42
+            test_ratio = 0.1
+            rng = np.random.default_rng(split_seed)
+
+            train_parts = []
+            test_parts = []
+
+            subset_labels = all_labels[indices]
+            for label in np.unique(subset_labels):
+                label_indices = indices[subset_labels == label].copy()
+                rng.shuffle(label_indices)
+
+                n_test = max(1, int(round(len(label_indices) * test_ratio))) if len(label_indices) > 1 else 0
+                test_parts.append(label_indices[:n_test])
+                train_parts.append(label_indices[n_test:])
+
+            train_indices = np.concatenate(train_parts) if train_parts else np.empty((0,), dtype=np.int64)
+            test_indices = np.concatenate(test_parts) if test_parts else np.empty((0,), dtype=np.int64)
+
+            rng.shuffle(train_indices)
+            rng.shuffle(test_indices)
+
+            if self.split == 'train':
+                indices = train_indices
+            elif self.split == 'test':
+                indices = test_indices
+            else:
+                raise NotImplementedError('data split only supports train/test')
+
             self.data = self._format_skeleton_array(all_data[indices])
             self.label = all_labels[indices]
+
             sample_ids = npz_data['sample_ids'][indices] if 'sample_ids' in npz_data else indices
             self.sample_name = [str(x) for x in sample_ids]
-        else:
-            raise KeyError(
-                'CARE-PD npz must contain either x_train/x_test/y_train/y_test or skeletons/labels'
-            )
 
     @staticmethod
     def _format_skeleton_array(data):
