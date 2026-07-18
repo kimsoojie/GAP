@@ -16,6 +16,7 @@ train_feeder_args:
   vel: False
   bone: True
   true_only: False
+  pelvis_norm: True
 
 test_feeder_args:
   data_path: ../data/CARE-PD-Skeleton/all_skeleton_label_pseudo_motion_relabel_64f.npz
@@ -26,6 +27,7 @@ test_feeder_args:
   bone: True
   debug: False
   true_only: False
+  pelvis_norm: True
 
 # model
 model: model.ctrgcn.Model_lst_4part_bone_carepd #model.ctrgcn.Model

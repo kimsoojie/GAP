@@ -5,6 +5,16 @@ from utils.utils import get_label_split_oneshot, get_label_split_zsl
 from feeders import tools
 
 
+def pelvis_normalize(data_numpy):
+    """Center each frame on the pelvis joint.
+
+    Input and output shape: C, T, V, M.
+    CARE-PD uses SMPL joint 1 as pelvis, which is index 0 here.
+    """
+    data_numpy = np.asarray(data_numpy, dtype=np.float32)
+    pelvis = data_numpy[:, :, 0:1, :]
+    return data_numpy - pelvis
+
 class Feeder(Dataset):
     def __init__(self, data_path, label_path=None, p_interval=1, split='train', random_choose=False, random_shift=False,
                  random_move=False, random_rot=False, window_size=-1, normalization=False, debug=False, use_mmap=False,
@@ -245,6 +255,8 @@ class Feeder(Dataset):
         data_numpy = self.data[index]
         label = self.label[index]
         data_numpy = np.array(data_numpy)
+        if self.pelvis_norm:
+            data_numpy = pelvis_normalize(data_numpy)
         # valid_frame_num = np.sum(data_numpy.sum(0).sum(-1).sum(-1) != 0)
         # # reshape Tx(MVC) to CTVM
         # data_numpy = tools.valid_crop_resize(data_numpy, valid_frame_num, self.p_interval, self.window_size)
