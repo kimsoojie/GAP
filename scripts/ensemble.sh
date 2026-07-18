@@ -54,6 +54,7 @@ python utils/ensemble.py \
 # python utils/ensemble.py \
 # --config care-pd \
 # --num-split 0 \
+# --true-only True \
 # --dataset CARE-PD \
 # --joint-dir work_dir/carepd/joint \
 # --bone-dir work_dir/carepd/bone \
