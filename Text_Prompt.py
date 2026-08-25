@@ -250,6 +250,10 @@ def text_prompt_openai_pasta_pool_4part_ucla():
         else:
             text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0]+','+','.join(pasta_list[5:]))) for pasta_list in ucla_paste_text_map1])
 
+    classes = torch.cat([v for k, v in text_dict.items()])
+    
+    return classes, num_text_aug, text_dict
+
 def text_prompt_4part_carepd():
     print("Use text prompt carepd")
     text_dict = {}
