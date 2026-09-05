@@ -36,11 +36,11 @@ class Feeder(Dataset):
         self.use_mmap = use_mmap
         self.repeat = repeat
         self.unseen_split = 5
-        #self.seen_labels, self.unseen_labels = get_label_split_zsl('NW-UCLA', self.unseen_split)
+        self.seen_labels, self.unseen_labels = get_label_split_zsl('NW-UCLA', self.unseen_split)
         #self.seen_labels, self.unseen_labels = get_label_split_oneshot('NW-UCLA', self.unseen_split)
         
-        self.load_data()
-        #self.load_data_split_zsl()
+        #self.load_data()
+        self.load_data_split_zsl()
         #self.load_data_split_oneshot(split=self.unseen_split)
         if normalization:
             self.get_mean_map()
