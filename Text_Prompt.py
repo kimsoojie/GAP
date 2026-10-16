@@ -146,15 +146,15 @@ def text_prompt_openai_pasta_pool_4part_pku():
 
     for ii in range(num_text_aug):
         if ii == 0:
-            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[ii])) for pasta_list in paste_text_pku])
+            text_dict[ii] = torch.cat([clip.tokenize(pasta_list[0]) for pasta_list in paste_text_pku])
         elif ii == 1:
-            text_dict[ii] = torch.cat([clip.tokenize((','.join(pasta_list[0:2]))) for pasta_list in paste_text_pku])
+            text_dict[ii] = torch.cat([clip.tokenize(pasta_list[0] + ',' + pasta_list[1]) for pasta_list in paste_text_pku])
         elif ii == 2:
-            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0] +','.join(pasta_list[2:4]))) for pasta_list in paste_text_pku])
+            text_dict[ii] = torch.cat([clip.tokenize(pasta_list[0] + ',' + pasta_list[2]) for pasta_list in paste_text_pku])
         elif ii == 3:
-            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0] +','+ pasta_list[4])) for pasta_list in paste_text_pku])
+            text_dict[ii] = torch.cat([clip.tokenize(pasta_list[0] + ',' + pasta_list[4]) for pasta_list in paste_text_pku])
         else:
-            text_dict[ii] = torch.cat([clip.tokenize((pasta_list[0]+','+','.join(pasta_list[5:]))) for pasta_list in paste_text_pku])
+            text_dict[ii] = torch.cat([clip.tokenize(pasta_list[0] + ',' + pasta_list[3]) for pasta_list in paste_text_pku])
 
 
     classes = torch.cat([v for k, v in text_dict.items()])
